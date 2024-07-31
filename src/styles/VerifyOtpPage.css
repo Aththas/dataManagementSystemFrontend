@@ -1,0 +1,58 @@
+/* Container for the Verify OTP page */
+.verify-otp-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  
+  /* Header styling */
+  .verify-otp-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Form styling (similar to ForgotPasswordForm) */
+  .verify-otp-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .verify-otp-form .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .verify-otp-form label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .verify-otp-form input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .verify-otp-form .error-message {
+    color: red;
+    margin-top: 10px;
+  }
+  
+  .verify-otp-form button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .verify-otp-form button:hover {
+    background-color: #0056b3;
+  }
+  
