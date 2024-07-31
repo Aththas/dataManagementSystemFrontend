@@ -24,7 +24,7 @@ const LoginForm = () => {
         localStorage.setItem('refreshToken', refreshToken);
 
         // Redirect to another page or handle successful login
-        window.location.href = '/dashboard'; // Example redirection
+        window.location.href = '/dashboard';
       } else {
         setErrorMessage(message || "Authentication failed.");
       }

@@ -1,6 +1,6 @@
 import React from 'react';
 import ForgotPasswordForm from '../components/ForgotPasswordForm';
-import '../styles/ForgotPasswordPage.css'; // Ensure this path is correct
+import '../styles/ForgotPasswordPage.css';
 
 const ForgotPasswordPage = () => {
   return (
