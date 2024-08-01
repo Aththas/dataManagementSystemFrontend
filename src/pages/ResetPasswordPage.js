@@ -1,6 +1,6 @@
 import React from 'react';
 import ResetPasswordForm from '../components/ResetPasswordForm';
-import '../styles/ResetPasswordPage.css'; // Ensure correct path to your CSS file
+import '../styles/ResetPasswordPage.css';
 
 const ResetPasswordPage = () => {
   return (
