@@ -1,11 +1,10 @@
 import React from 'react';
 import ForgotPasswordForm from '../components/ForgotPasswordForm';
-import '../styles/ForgotPasswordPage.css';
+import '../styles/form.css';
 
 const ForgotPasswordPage = () => {
   return (
-    <div className="forgot-password-container">
-      <h2>Forgot Password</h2>
+    <div>
       <ForgotPasswordForm />
     </div>
   );
