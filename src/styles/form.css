@@ -1,0 +1,124 @@
+*{
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+span{
+	color: crimson;
+}
+.p{
+	color: white;
+}
+.h1{
+	color: white;
+}
+.log{
+	background-color: rgb(51,46,46);
+}
+.form-control{
+	background-color: rgb(70,61,61);
+	color:white;
+	border: none;
+	outline: none;
+	padding: 25px;
+	border-radius: 50px;
+	font-size: 15px;
+}
+.form-control:focus{
+	background-color: rgb(63,56,56);
+	outline: none;
+	color: white;
+	border:  0.2rem solid crimson;
+}
+.btn1{
+	background-color: transparent;
+	color: crimson;
+	font-weight: bold;
+	outline: none;
+	border: 0.2rem solid crimson;
+	border-radius: 50px;
+	height: 50px;
+	width: 300px;
+	font-size: 15px;
+}
+.btn1:hover{
+	background-color: crimson;
+	color: white;
+}
+small{
+	color: white;
+	font-size: 15px;
+}
+a{
+	color: crimson;
+	cursor: pointer;
+}
+a:hover
+{
+	color: crimson;
+	opacity: 0.75;
+	text-decoration: none;
+}
+.screen {
+	height: 100vh; /* Full viewport height */
+	display: flex; /* Flexbox to center content */
+	align-items: center; /* Vertically center content */
+	justify-content: center; /* Horizontally center content */
+  }
+.login-body{
+	  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(17, 17, 17, 0.7)), to(rgba(17, 17, 17, 0.7))), url(./img/bgnew.jpg) no-repeat;
+  background: linear-gradient(rgba(17, 17, 17, 0.7), rgba(17, 17, 17, 0.7)), url(./img/bgnew.jpg) no-repeat;
+  background-size: cover;
+  background-position: center;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  min-height: 80vh;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding-bottom: 5rem;
+}
+img{
+	opacity: 0.5;
+}
+.swal-modal {
+  background-color: #222222;
+  border: 3px solid crimson;
+}
+.swal-title {
+  color: crimson;
+}
+.swal-text {
+  color: white;
+}
+.swal-button {
+  margin-top: 1rem;
+  display: inline-block;
+  padding: 0.2rem 3rem;
+  font-size: 1rem;
+  color: crimson;
+  border: 0.2rem solid crimson;
+  border-radius: 5rem;
+  cursor: pointer;
+  background: none;
+}
+.swal-button:hover {
+  background: crimson;
+  color: #fffdfd;
+}
+
+/* Styles for input placeholders */
+.form-control::placeholder, .form-control[type="password"]::placeholder, .form-control:required {
+	color: #bfbfbf; /* Placeholder text color */
+	opacity: 1; /* Ensure opacity is fully visible */
+	font-style: italic; /* Optional: italicize placeholder text */
+  }
+  

@@ -5,9 +5,11 @@ import '../styles/LoginPage.css';
 
 const LoginPage = () => {
   return (
+    <div className="login-body">
     <div className="login-page">
         <h1>Login</h1>
         <LoginForm />
+      </div>
       </div>
   );
 };
