@@ -5,7 +5,8 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     margin: 20px 0;
-    overflow-x: auto;
+    height: 725px;
+    overflow-y: auto;
 }
 
 .view-users .heading {
@@ -79,11 +80,11 @@
 }
 .view-users table tbody tr {
     background-color: #ffffff;
-    color: #000;
+    color: #332E2E;
 }
 
 .view-users table tbody tr:hover {
-    background-color: #2a2929;
+    background-color: #332E2E;
     color: #ffffff;
 }
 
@@ -96,23 +97,23 @@
 }
 
 .view-users table tbody td .btn-edit {
-    background-color: #63b4f4;
+    background-color: #655CC9;
     color: #fff;
     margin-left: 5px;
 }
 
 .view-users table tbody td .btn-edit:hover {
-    background-color: #5099d9;
+    background-color: #6c63ca;
 }
 
 .view-users table tbody td .btn-disable {
-    background-color: #ed5564;
+    background-color: crimson;
     color: #fff;
     margin-left: 5px;
 }
   
 .view-users table tbody td .btn-disabled {
-   background-color: #a20b00; /* Red */
+   background-color: crimson; /* Red */
    color: #fff;
     margin-left: 5px;
 }
