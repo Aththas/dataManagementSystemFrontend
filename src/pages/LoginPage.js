@@ -5,7 +5,7 @@ import '../styles/form.css';
 
 const LoginPage = () => {
   return (
-    <div>
+    <div className='bg'>
         <LoginForm />
       </div>
   );

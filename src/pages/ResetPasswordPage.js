@@ -1,11 +1,10 @@
 import React from 'react';
 import ResetPasswordForm from '../components/ResetPasswordForm';
-import '../styles/ResetPasswordPage.css';
+import '../styles/form.css';
 
 const ResetPasswordPage = () => {
   return (
-    <div className="reset-password-page">
-      <h1>Reset Password</h1>
+    <div>
       <ResetPasswordForm />
     </div>
   );
