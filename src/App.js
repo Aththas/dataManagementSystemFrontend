@@ -5,6 +5,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import VerifyOtpPage from './pages/VerifyOtpPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import HomePage from './pages/HomePage';
+import DisplayUsersPage from './admin/pages/DisplayUsersPage';
 
 function App() {
   return (
@@ -14,7 +15,9 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/verify-otp" element={<VerifyOtpPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/new-password" element={<ResetPasswordPage />} />
+        <Route path="/view-users" element={<DisplayUsersPage/>} />
+
       </Routes>
     </Router>
   );

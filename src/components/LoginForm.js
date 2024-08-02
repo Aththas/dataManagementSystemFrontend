@@ -21,12 +21,16 @@ const LoginForm = () => {
       });
 
       const { success, data: responseData, message } = response.data;
-
+      console.log(message);
       if (success && responseData) {
         const { accessToken, refreshToken } = responseData;
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
-        window.location.href = '/dashboard';
+        if(message === "ADMIN"){
+          window.location.href = '/view-users';
+        }else if(message === "MANAGER"){
+          window.location.href = '/view-acm';
+        }
       } else {
         Swal.fire({
           icon: 'error',
