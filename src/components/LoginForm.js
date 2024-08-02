@@ -26,10 +26,11 @@ const LoginForm = () => {
         const { accessToken, refreshToken } = responseData;
         localStorage.setItem('accessToken', accessToken);
         localStorage.setItem('refreshToken', refreshToken);
+        console.log(refreshToken);
         if(message === "ADMIN"){
           window.location.href = '/view-users';
         }else if(message === "MANAGER"){
-          window.location.href = '/view-acm';
+          window.location.href = '/AMC';
         }
       } else {
         Swal.fire({
