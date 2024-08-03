@@ -120,7 +120,7 @@ const UpdateUserForm = ({ id, onClose }) => {
               required
               className='input'
             >
-              <option value="">Select Role</option>
+              <option value="" disabled>Select Role</option>
               <option value="MANAGER">MANAGER</option>
             </select>
           </label>

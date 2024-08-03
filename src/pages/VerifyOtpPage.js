@@ -4,7 +4,7 @@ import '../styles/form.css';
 
 const VerifyOtpPage = () => {
   return (
-    <div>
+    <div className='bg'>
       <VerifyOtpForm />
     </div>
   );

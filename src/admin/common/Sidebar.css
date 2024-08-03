@@ -1,0 +1,31 @@
+
+.amc-contract {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sublist {
+  list-style-type: none;
+  padding: 0;
+  margin-left: 20px;
+  transition: max-height 0.3s ease-out;
+  overflow: hidden;
+}
+
+.sublist li {
+  padding: 5px 0;
+  background: black;
+}
+.sublist li:hover{
+    background: blue;
+  }
+
+.sublist li a {
+  color: white;
+  text-decoration: none;
+}
+
+.chevron-icon {
+  margin-left: auto;
+}
