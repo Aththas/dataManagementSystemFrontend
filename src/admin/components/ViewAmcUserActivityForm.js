@@ -19,7 +19,7 @@ const ViewAmcUserActivityForm = ({ id, onClose }) => {
           const amcUserActivity = response.data.data;
           setVersion(amcUserActivity.version);
           setAction(amcUserActivity.action);
-          setDescription(amcUserActivity.description);
+          setDescription(amcUserActivity.description.replace(/\n/g, "<br />")); // Use regex to replace all newlines
           setUser(amcUserActivity.user);
           setRowBefore(amcUserActivity.rowBefore);
           setRowAfter(amcUserActivity.rowAfter);
@@ -39,71 +39,44 @@ const ViewAmcUserActivityForm = ({ id, onClose }) => {
     <div className="popup-overlay">
       <div className="popup-content">
         <button className="popup-close" onClick={onClose}>×</button>
-        <h2 className='h2'>View AMC User Activity</h2>
-        <form className='form'>
+        <form className='form' style={{fontSize:'12px'}}>
           <label className='label'>
-            Version:
-            <input
-              type="text"
-              value={version}
-              readOnly
-              className='input'
-            />
+            <b>Version:</b> {version}
           </label>
           <label className='label'>
-            Action:
-            <input
-              type="text"
-              value={action}
-              readOnly
-              className='input'
-            />
+            <b>User:</b> {user}
           </label>
           <label className='label'>
-            Description:
-            <input
-              type="text"
-              value={description}
-              readOnly
-              className='input'
-            />
+            <b>Action:</b> {action}
           </label>
           <label className='label'>
-            User:
-            <input
-              type="text"
-              value={user}
-              readOnly
-              className='input'
-            />
+            <b>Timestamp:</b> {dateTime}
           </label>
           <label className='label'>
-            Row Before update:
-            <input
-              type="text"
-              value={rowBefore}
-              readOnly
-              className='input'
-            />
+            <b>Description:</b> <span dangerouslySetInnerHTML={{ __html: description }} />
           </label>
-          <label className='label'>
-            Row After update:
-            <input
-              type="text"
-              value={rowAfter}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Timestamp:
-            <input
-              type="text"
-              value={dateTime}
-              readOnly
-              className='input'
-            />
-          </label>
+          {action === 'add' ? (
+            <>
+              <label className='label'>
+                <b>Added Row:</b> {rowAfter}
+              </label>
+            </>
+          ) : action === 'delete' ? (
+            <>
+              <label className='label'>
+                <b>Deleted Row:</b> {rowBefore}
+              </label>
+            </>
+          ) : (
+            <>
+              <label className='label'>
+                <b>Row Before update:</b> {rowBefore}
+              </label>
+              <label className='label'>
+                <b>Row After update:</b> {rowAfter}
+              </label>
+            </>
+          )}
           <button type="button" className='button' onClick={onClose}>Close</button>
         </form>
       </div>
