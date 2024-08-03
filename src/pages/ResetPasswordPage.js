@@ -4,7 +4,7 @@ import '../styles/form.css';
 
 const ResetPasswordPage = () => {
   return (
-    <div>
+    <div className='bg'>
       <ResetPasswordForm />
     </div>
   );

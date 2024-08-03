@@ -15,14 +15,20 @@ const ViewUsers = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchUsers = useCallback(async () => {
     try {
       const response = await axiosInstance.get(`/user/viewUsers?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`);
-      setUsers(response.data.data);
-      setTotalPages(Math.ceil(response.data.message / size));
+      setUsers(response.data.data || []); // Ensure users is always an array
+      if(response.data.data === null){
+        setTotalPages(1);
+      }else{
+        setTotalPages(Math.ceil((response.data.message || 0) / size));
+      }
     } catch (error) {
       console.error('Error fetching users:', error);
+      setUsers([]); // Ensure users is an empty array on error
     }
   }, [page, size, sortBy, ascending]);
 
@@ -40,7 +46,7 @@ const ViewUsers = () => {
   };
 
   const handleSizeChange = (event) => {
-    setSize(event.target.value);
+    setSize(Number(event.target.value)); // Ensure size is a number
     setPage(0);
   };
 
@@ -115,22 +121,44 @@ const ViewUsers = () => {
     }
   };
 
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value.toLowerCase());
+  };
+
+  const filteredUsers = users.filter(user =>
+    user.firstname.toLowerCase().includes(searchQuery) ||
+    user.lastname.toLowerCase().includes(searchQuery) ||
+    user.email.toLowerCase().includes(searchQuery) ||
+    user.role.toLowerCase().includes(searchQuery)
+  );
+
   return (
     <div className="view-users">
       <div className="heading">
         <h2>Users List</h2>
-        <button onClick={() => setShowAddForm(true)} className="btn">Add New User</button>
       </div>
-      <div className="pagination">
-        <label>
-          Entries per page:
-          <select value={size} onChange={handleSizeChange}>
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
-          </select>
-        </label>
+      <div className="search-box">
+        <input
+          type="text"
+          placeholder="Search..."
+          value={searchQuery}
+          onChange={handleSearch}
+          className="search-input"
+        />
+      </div>
+      <div className="heading">
+        <div className="pagination">
+          <label>
+            Entries per page:
+            <select value={size} onChange={handleSizeChange}>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+          </label>
+        </div>
+        <button onClick={() => setShowAddForm(true)} className="btn">Add New User</button>
       </div>
       <table>
         <thead>
@@ -144,15 +172,15 @@ const ViewUsers = () => {
           </tr>
         </thead>
         <tbody>
-          {users.map((user, index) => (
-            <tr key={index}>
+          {filteredUsers.map((user, index) => (
+            <tr key={user.id}> {/* Use a unique key based on user.id */}
               <td>{index + 1 + page * size}</td>
               <td>{user.firstname}</td>
               <td>{user.lastname}</td>
               <td>{user.email}</td>
               <td>{user.role}</td>
               <td>
-                <button onClick={() => handleEdit(user.id)} className="btn-edit"></button>
+                <button onClick={() => handleEdit(user.id)} className="btn-edit">Edit</button>
                 <button
                   onClick={() => handleToggleEnableDisable(user)}
                   className={`${user.email.endsWith('null') ? 'btn-enabled' : 'btn-disabled'}`}

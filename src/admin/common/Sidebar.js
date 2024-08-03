@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../tokenValidation/axiosInstance';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThLarge, faBook, faUser, faUserCircle, faClipboardList, faCog } from '@fortawesome/free-solid-svg-icons';
+import { faThLarge, faBook, faUser, faUserCircle, faClipboardList, faCog, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
   const [user, setUser] = useState(null);
+  const [isAmcSublistOpen, setIsAmcSublistOpen] = useState(false);
+  const [isPoSublistOpen, setIsPoSublistOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -23,44 +25,81 @@ const Sidebar = () => {
     fetchUserDetails();
   }, []);
 
+  const toggleAmcSublist = () => {
+    setIsAmcSublistOpen(!isAmcSublistOpen);
+  };
+
+  const togglePoSublist = () => {
+    setIsPoSublistOpen(!isPoSublistOpen);
+  };
+
   return (
     <div className="sidebar">
       <ul>
         <li>
-          <a href="/AMC">
-          <FontAwesomeIcon icon={faThLarge} className="icon" />
+          <a href="/view-amcList">
+            <FontAwesomeIcon icon={faThLarge} className="icon" />
             <div className="title">Dashboard</div>
           </a>
         </li>
         {user && user.role === 'ADMIN' && (
           <li>
-            <a href="/view-users" style={{marginLeft: '10px'}}>
-            <FontAwesomeIcon icon={faUser} className="icon" />
+            <a href="/view-users" style={{ marginLeft: '10px' }}>
+              <FontAwesomeIcon icon={faUser} className="icon" />
               <div className="title">Users</div>
             </a>
           </li>
         )}
-
-        <li>
-          <a href="/AMC"  style={{marginLeft: '10px'}}>
-            <FontAwesomeIcon icon={faBook} className="icon" />
-            <div className="title">AMC Contract</div>
-          </a>
+        <li style={{ height: isAmcSublistOpen ? 'auto' : '50px', marginBottom: isAmcSublistOpen ? '10px' : '0' }}>
+          <div onClick={toggleAmcSublist} style={{ cursor: 'pointer', marginLeft: '10px', display: 'flex', alignItems: 'center' }}>
+            <FontAwesomeIcon icon={faBook} className="icon" style={{ color: 'white'}} />
+            <div className="title" style={{ color: 'white' }}>
+              AMC <FontAwesomeIcon icon={isAmcSublistOpen ? faChevronUp : faChevronDown} className="icon"/>
+            </div>
+          </div>
+          {isAmcSublistOpen && (
+            <ul className="sublist">
+              <li style={{border: 'none'}}>
+                <a href="/view-amcList" style={{ marginLeft: '20px'}}>
+                  <FontAwesomeIcon icon={faClipboardList} className="icon" />
+                  <div className="title">AMC Contract</div>
+                </a>
+              </li>
+              <li>
+                <a href="/user-activity-amc" style={{ marginLeft: '27px' }}>
+                  <FontAwesomeIcon icon={faUserCircle} className="icon" />
+                  <div className="title">User Activity AMC</div>
+                </a>
+              </li>
+            </ul>
+          )}
+        </li>
+        <li style={{ height: isPoSublistOpen ? 'auto' : '50px', marginBottom: isPoSublistOpen ? '10px' : '0' }}>
+          <div onClick={togglePoSublist} style={{ cursor: 'pointer', marginLeft: '10px', display: 'flex', alignItems: 'center' }}>
+            <FontAwesomeIcon icon={faBook} className="icon" style={{ color: 'white'}} />
+            <div className="title" style={{ color: 'white' }}>
+              Purchase Order <FontAwesomeIcon icon={isPoSublistOpen ? faChevronUp : faChevronDown} className="icon"/>
+            </div>
+          </div>
+          {isPoSublistOpen && (
+            <ul className="sublist">
+              <li style={{border: 'none'}}>
+                <a href="/view-poList" style={{ marginLeft: '20px'}}>
+                  <FontAwesomeIcon icon={faClipboardList} className="icon" />
+                  <div className="title">PO Details</div>
+                </a>
+              </li>
+              <li>
+                <a href="/user-activity-PO" style={{ marginLeft: '27px' }}>
+                  <FontAwesomeIcon icon={faUserCircle} className="icon" />
+                  <div className="title">User Activity PO</div>
+                </a>
+              </li>
+            </ul>
+          )}
         </li>
         <li>
-          <a href="/PO"  style={{marginLeft: '10px'}}>
-            <FontAwesomeIcon icon={faClipboardList} className="icon" />
-            <div className="title">PO Details</div>
-          </a>
-        </li>
-        <li>
-          <a href="/user-activity"  style={{marginLeft: '10px'}}>
-            <FontAwesomeIcon icon={faUserCircle} className="icon" />
-            <div className="title">User Activity</div>
-          </a>
-        </li>
-        <li>
-          <a href="/user-profile"  style={{marginLeft: '10px'}}>
+          <a href="/user-profile" style={{ marginLeft: '10px' }}>
             <FontAwesomeIcon icon={faCog} className="icon" />
             <div className="title">Profile</div>
           </a>

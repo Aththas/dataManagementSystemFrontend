@@ -30,7 +30,7 @@ const LoginForm = () => {
         if(message === "ADMIN"){
           window.location.href = '/view-users';
         }else if(message === "MANAGER"){
-          window.location.href = '/AMC';
+          window.location.href = '/view-amcList';
         }
       } else {
         Swal.fire({

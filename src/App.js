@@ -6,6 +6,8 @@ import VerifyOtpPage from './pages/VerifyOtpPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import HomePage from './pages/HomePage';
 import DisplayUsersPage from './admin/pages/DisplayUsersPage';
+import DisplayAmcPage from './admin/pages/DisplayAmcPage';
+import DisplayAmcUserActivityPage from './admin/pages/DisplayAmcUserActivityPage';
 
 function App() {
   return (
@@ -17,7 +19,8 @@ function App() {
         <Route path="/verify-otp" element={<VerifyOtpPage />} />
         <Route path="/new-password" element={<ResetPasswordPage />} />
         <Route path="/view-users" element={<DisplayUsersPage/>} />
-
+        <Route path="/view-amcList" element={<DisplayAmcPage/>} />
+        <Route path="/user-activity-amc" element={<DisplayAmcUserActivityPage />} />
       </Routes>
     </Router>
   );

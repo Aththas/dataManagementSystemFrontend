@@ -108,6 +108,14 @@
     width: 35px;
     height: 35px;
 }
+.tbl-user {
+    position: relative;
+    width: 35px;
+    height: 35px;
+    opacity: 1.5;
+    align-items: center;
+    justify-content: center;
+}
 
 .img {
     position: absolute;
