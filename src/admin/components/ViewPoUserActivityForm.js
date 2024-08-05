@@ -3,7 +3,7 @@ import axiosInstance from '../tokenValidation/axiosInstance';
 import '../styles/popupForm.css';
 import Swal from 'sweetalert2';
 
-const ViewAmcUserActivityForm = ({ id, onClose }) => {
+const ViewPoUserActivityForm = ({ id, onClose }) => {
   const [version, setVersion] = useState('');
   const [action, setAction] = useState('');
   const [description, setDescription] = useState('');
@@ -15,7 +15,7 @@ const ViewAmcUserActivityForm = ({ id, onClose }) => {
   useEffect(() => {
     const fetchAmcUserActivityDetails = async () => {
       try {
-        const response = await axiosInstance.get(`/userActivityAmc/viewActivity?id=${id}`);
+        const response = await axiosInstance.get(`/userActivityPo/viewActivity?id=${id}`);
         if (response.data.success) {
           const amcUserActivity = response.data.data;
           setVersion(amcUserActivity.version);
@@ -26,19 +26,19 @@ const ViewAmcUserActivityForm = ({ id, onClose }) => {
           setRowAfter(amcUserActivity.rowAfter);
           setDateTime(amcUserActivity.dateTime);
         } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: response.data.message,
+            });
+          }
+        } catch (error) {
           Swal.fire({
             icon: 'error',
             title: 'Error',
-            text: response.data.message,
+            text: 'An unexpected error occurred. Please try again later.',
           });
         }
-      } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An unexpected error occurred. Please try again later.',
-        });
-      }
     };
 
     fetchAmcUserActivityDetails();
@@ -93,4 +93,4 @@ const ViewAmcUserActivityForm = ({ id, onClose }) => {
   );
 };
 
-export default ViewAmcUserActivityForm;
+export default ViewPoUserActivityForm;

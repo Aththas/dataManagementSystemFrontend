@@ -2,9 +2,9 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '../tokenValidation/axiosInstance';
 import './ViewUser.css';
 import csv from '../img/csv.png';
-import ViewAmcUserActivityForm from './ViewAmcUserActivityForm';
+import ViewPoUserActivityForm from './ViewPoUserActivityForm';
 
-const ViewAmcUserActivity = () => {
+const ViewPoUserActivity = () => {
   const [userActivityList, setUserActivityList] = useState([]);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
@@ -19,8 +19,8 @@ const ViewAmcUserActivity = () => {
   const fetchUserActivityList = useCallback(async () => {
     try {
       const endpoint = filter === 'all' 
-        ? `/userActivityAmc/viewAllActivities?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`
-        : `/userActivityAmc/viewAllMyActivities?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`;
+        ? `/userActivityPo/viewAllActivities?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`
+        : `/userActivityPo/viewAllMyActivities?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`;
       const response = await axiosInstance.get(endpoint);
       setUserActivityList(response.data.data || []); // Handle null or undefined response data
       if(response.data.data === null){
@@ -80,7 +80,7 @@ const ViewAmcUserActivity = () => {
   return (
     <div className="view-users">
       <div className="heading">
-        <h2>User Activity List - AMC </h2>
+        <h2>User Activity List - PO</h2>
       </div>
       <div className="heading">
         <div className="search-box">
@@ -175,9 +175,9 @@ const ViewAmcUserActivity = () => {
         </button>
       </div>
 
-      {showViewForm && <ViewAmcUserActivityForm id={currentActivityId} onClose={handleCloseForm} />}
+      {showViewForm && <ViewPoUserActivityForm id={currentActivityId} onClose={handleCloseForm} />}
     </div>
   );
 };
 
-export default ViewAmcUserActivity;
+export default ViewPoUserActivity;

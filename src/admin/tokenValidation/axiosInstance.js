@@ -11,10 +11,10 @@ axiosInstance.interceptors.response.use(
   response => response,
   async error => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response.status === 403 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const response = await axiosInstance.post('/auth/refresh-token', null, {
+        const response = await axiosInstance.post('/auth/refresh-token', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('refreshToken')}`
           }

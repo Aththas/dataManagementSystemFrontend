@@ -172,7 +172,8 @@ const ViewUsers = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredUsers.map((user, index) => (
+          {filteredUsers.length > 0 ? (
+            filteredUsers.map((user, index) => (
             <tr key={user.id}> {/* Use a unique key based on user.id */}
               <td>{index + 1 + page * size}</td>
               <td>{user.firstname}</td>
@@ -189,7 +190,12 @@ const ViewUsers = () => {
                 </button>
               </td>
             </tr>
-          ))}
+          ))
+        ):(
+          <tr>
+            <td colSpan="6">No Users found</td>
+          </tr>
+        )}
         </tbody>
       </table>
       <div className="pagination">
