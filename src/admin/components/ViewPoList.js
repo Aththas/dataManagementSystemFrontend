@@ -1,22 +1,23 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '../tokenValidation/axiosInstance';
 import './ViewUser.css';
-import AddAmcForm from './AddAmcForm';
-import UpdateAmcForm from './UpdateAmcForm';
-import ViewAmcForm from './ViewAmcForm';
+import AddPoForm from './AddPoForm';
+import UpdatePoForm from './UpdatePoForm';
+import ViewPoForm from './ViewPoForm';
 import Swal from 'sweetalert2';
+import pdf from '../img/pdf-logo.png'
 
-const ViewAmcList = () => {
-  const [amcList, setAmcList] = useState([]);
+const ViewPoList = () => {
+  const [poList, setPoList] = useState([]);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
   const [sortBy, setSortBy] = useState('id');
-  const [ascending, setAscending] = useState(true);
+  const [ascending, setAscending] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [showViewForm, setShowViewForm] = useState(false);
-  const [currentAmcId, setCurrentAmcId] = useState(null);
+  const [currentPoId, setCurrentPoId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('all');
   const [currentUser, setCurrentUser] = useState(null);
@@ -34,29 +35,28 @@ const ViewAmcList = () => {
     }
   }, []);
 
-  const fetchAmcList = useCallback(async () => {
+  const fetchPoList = useCallback(async () => {
     try {
       const endpoint = filter === 'all'
-        ? `/amc/viewAllAmcList?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`
-        : `/amc/viewAllMyAmcList?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`;
+        ? `/po/viewAllPoList?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`
+        : `/po/viewAllMyPoList?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`;
       const response = await axiosInstance.get(endpoint);
-      // Safeguard against response.data.data being null
-      setAmcList(response.data.data || []);
+      setPoList(response.data.data || []);
       if(response.data.data === null){
         setTotalPages(1);
       }else{
         setTotalPages(Math.ceil((response.data.message || 0) / size));
       }
     } catch (error) {
-      console.error('Error fetching AMC list:', error);
-      setAmcList([]); // Set to empty array on error
+      console.error('Error fetching PO list:', error);
+      setPoList([]); // Set to empty array on error
     }
   }, [page, size, sortBy, ascending, filter]);
 
   useEffect(() => {
     fetchCurrentUser();
-    fetchAmcList();
-  }, [fetchCurrentUser, fetchAmcList]);
+    fetchPoList();
+  }, [fetchCurrentUser, fetchPoList]);
 
   const handleSort = (field) => {
     setSortBy(field);
@@ -72,14 +72,16 @@ const ViewAmcList = () => {
     setPage(0);
   };
 
-  const handleEdit = (amcId) => {
-    console.log("handleedit ", amcId);
-    setCurrentAmcId(amcId);
+  const handleEdit = (poId) => {
+    console.log("handleedit ", poId);
+    setCurrentPoId(poId);
     setShowUpdateForm(true);
   };
 
-  const handleView = (amcId) => {
-    setCurrentAmcId(amcId);
+  const handleView = (poId) => {
+    console.log("handleedit ", poId);
+    setCurrentPoId(poId);
+    console.log("cid " , currentPoId)
     setShowViewForm(true);
   };
 
@@ -87,7 +89,7 @@ const ViewAmcList = () => {
     setShowAddForm(false);
     setShowUpdateForm(false);
     setShowViewForm(false);
-    setCurrentAmcId(null);
+    setCurrentPoId(null);
   };
 
   const handleSearch = (event) => {
@@ -99,7 +101,7 @@ const ViewAmcList = () => {
     setPage(0);
   };
 
-  const handleDelete = (amcId) => {
+  const handleDelete = (poId) => {
     Swal.fire({
       title: 'Are you sure?',
       text: 'You won\'t be able to revert this!',
@@ -112,14 +114,14 @@ const ViewAmcList = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axiosInstance.delete(`/amc/deleteMyAmc?id=${amcId}`);
+          const response = await axiosInstance.delete(`/po/deleteMyPo?id=${poId}`);
           if (response.data.success) {
             Swal.fire(
               'Deleted!',
-              'The AMC has been deleted.',
+              'The PO has been deleted.',
               'success'
             );
-            fetchAmcList(); // Refresh the AMC list after deletion
+            fetchPoList(); // Refresh the PO list after deletion
           } else {
             Swal.fire({
               icon: 'error',
@@ -138,17 +140,18 @@ const ViewAmcList = () => {
     });
   };
 
-  const filteredAmcList = amcList.filter(amc =>
-    amc.contractName.toLowerCase().includes(searchQuery) ||
-    amc.userDivision.toLowerCase().includes(searchQuery) ||
-    amc.category.toLowerCase().includes(searchQuery) ||
-    amc.user.toLowerCase().includes(searchQuery)
+  const filteredPoList = poList.filter(po =>
+    po.vendorName.toLowerCase().includes(searchQuery) ||
+    po.approvalStatus.toLowerCase().includes(searchQuery) ||
+    po.user.toLowerCase().includes(searchQuery) ||
+    po.poType.toLowerCase().includes(searchQuery) ||
+    po.department.toLowerCase().includes(searchQuery)
   );
 
   return (
     <div className="view-users">
       <div className="heading">
-        <h2>AMC List</h2>
+        <h2>PO List</h2>
       </div>
       <div className="heading">
         <div className="search-box">
@@ -160,7 +163,7 @@ const ViewAmcList = () => {
             className="search-input"
           />
         </div>
-        <button onClick={() => setShowAddForm(true)} className="btn">Add New AMC</button>
+        <button onClick={() => setShowAddForm(true)} className="btn">Add New PO</button>
       </div>
       <div className="heading">
         <div className="pagination">
@@ -178,8 +181,8 @@ const ViewAmcList = () => {
           <label>
             Filter:
             <select value={filter} onChange={handleFilterChange}>
-              <option value="all">All AMC</option>
-              <option value="my">My AMC</option>
+              <option value="all">All PO</option>
+              <option value="my">My PO</option>
             </select>
           </label>
         </div>
@@ -188,42 +191,48 @@ const ViewAmcList = () => {
         <thead>
           <tr>
             <td onClick={() => handleSort('id')}>#</td>
-            <td onClick={() => handleSort('contractName')}>Contract Name</td>
-            <td onClick={() => handleSort('userDivision')}>User Division</td>
-            <td onClick={() => handleSort('initialCostUSD')}>Initial Cost (USD)</td>
-            <td onClick={() => handleSort('initialCostLKR')}>Initial Cost (LKR)</td>
-            <td onClick={() => handleSort('startDate')}>Start Date</td>
-            <td onClick={() => handleSort('endDate')}>End Date</td>
-            <td onClick={() => handleSort('category')}>Category</td>
+            <td onClick={() => handleSort('poNumber')}>PO Number</td>
+            <td onClick={() => handleSort('creationDate')}>Creation Date</td>
+            <td onClick={() => handleSort('poCreationDate')}>PO Creation Date</td>
+            <td onClick={() => handleSort('poType')}>PO Type</td>
+            <td onClick={() => handleSort('vendorName')}>Vendor Name</td>
+            <td onClick={() => handleSort('approvalStatus')}>Approval Status</td>
+            <td onClick={() => handleSort('department')}>Department</td>
+            <td>PO File</td>
             <td onClick={() => handleSort('user')}>User</td>
             <td>Actions</td>
           </tr>
         </thead>
         <tbody>
-          {filteredAmcList.length > 0 ? (
-            filteredAmcList.map((amc, index) => (
-            <tr key={amc.id}>
+          {filteredPoList.length > 0 ? (
+            filteredPoList.map((po, index) => (
+            <tr key={po.id}>
               <td>{index + 1 + page * size}</td>
-              <td>{amc.contractName}</td>
-              <td>{amc.userDivision}</td>
-              <td>{amc.initialCostUSD}</td>
-              <td>{amc.initialCostLKR}</td>
-              <td>{new Date(amc.startDate).toLocaleDateString()}</td>
-              <td>{new Date(amc.endDate).toLocaleDateString()}</td>
-              <td>{amc.category}</td>
-              <td>{amc.user}</td>
+              <td>{po.poNumber}</td>
+              <td>{new Date(po.creationDate).toLocaleDateString()}</td>
+              <td>{new Date(po.poCreationDate).toLocaleDateString()}</td>
+              <td>{po.poType}</td>
+              <td>{po.vendorName}</td>
+              <td>{po.approvalStatus}</td>
+              <td>{po.department}</td>
+              <td>
+                  <a href={po.poFile} target='_blank' rel="noopener noreferrer">
+                    <img src={pdf} alt="pdf file" className="tbl-user" />
+                  </a>
+              </td>
+              <td>{po.user}</td>
               <td>
                 <button 
-                  onClick={() => handleView(amc.id)} 
+                  onClick={() => handleView(po.id)} 
                   className="btn-view"
-                  style={{ width: (currentUser && (amc.user === currentUser.email)) ? '60px' : '165px' }}
+                  style={{ width: (currentUser && (po.user === currentUser.email)) ? '60px' : '165px' }}
                 >
                   View
                 </button>
-                {currentUser && amc.user === currentUser.email && (
+                {currentUser && po.user === currentUser.email && (
                   <>
-                    <button onClick={() => handleEdit(amc.id)} className="btn-edit">Edit</button>
-                    <button onClick={() => handleDelete(amc.id)} className="btn-delete">Delete</button>
+                    <button onClick={() => handleEdit(po.id)} className="btn-edit">Edit</button>
+                    <button onClick={() => handleDelete(po.id)} className="btn-delete">Delete</button>
                   </>
                 )}
               </td>
@@ -231,7 +240,7 @@ const ViewAmcList = () => {
           ))
         ):(
           <tr>
-            <td colSpan="10">No Details found</td>
+            <td colSpan="11">No Details found</td>
           </tr>
         )}
         </tbody>
@@ -241,17 +250,16 @@ const ViewAmcList = () => {
           Previous
         </button>
         <span>Page {page + 1} of {totalPages}</span>
-        <button onClick={() => handlePageChange(page + 1)} disabled={page + 1 === totalPages}>
+        <button onClick={() => handlePageChange(page + 1)} disabled={page === totalPages - 1}>
           Next
         </button>
       </div>
-      {console.log("cid xcxc ", currentAmcId)}
-      {/* Conditionally render AddAmcForm, UpdateAmcForm, ViewAmcForm, and Delete confirmation dialog */}
-      {showAddForm && <AddAmcForm onClose={handleCloseForm} />}
-      {showUpdateForm && <UpdateAmcForm id={currentAmcId} onClose={handleCloseForm} />}
-      {showViewForm && <ViewAmcForm id={currentAmcId} onClose={handleCloseForm} />}
+      {    console.log("cid " , currentPoId)}
+      {showAddForm && <AddPoForm onClose={handleCloseForm} />}
+      {showUpdateForm && <UpdatePoForm id={currentPoId} onClose={handleCloseForm} />}
+      {showViewForm && <ViewPoForm id={currentPoId} onClose={handleCloseForm} />}
     </div>
   );
 };
 
-export default ViewAmcList;
+export default ViewPoList;

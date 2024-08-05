@@ -19,6 +19,7 @@ const UpdateAmcForm = ({ id, onClose }) => {
   useEffect(() => {
     const fetchAmcDetails = async () => {
       try {
+        console.log("up "+ id);
         const response = await axiosInstance.get(`/amc/viewAmc?id=${id}`);
         if (response.data.success) {
           const amc = response.data.data;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../tokenValidation/axiosInstance';
 import '../styles/popupForm.css';
+import Swal from 'sweetalert2';
 
 const ViewAmcForm = ({ id, onClose }) => {
   const [userDivision, setUserDivision] = useState('');
@@ -33,10 +34,18 @@ const ViewAmcForm = ({ id, onClose }) => {
           setAmcPercentageUponPurchasePrice(amc.amcPercentageUponPurchasePrice);
           setCategory(amc.category);
         } else {
-          alert('Error fetching AMC details: ' + response.data.message);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: response.data.message,
+          });
         }
       } catch (error) {
-        alert('An unexpected error occurred. Please try again later.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'An unexpected error occurred. Please try again later.',
+        });
       }
     };
 
