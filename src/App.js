@@ -11,6 +11,7 @@ import DisplayAmcUserActivityPage from './admin/pages/DisplayAmcUserActivityPage
 import DisplayPoPage from './admin/pages/DisplayPoPage';
 import DisplayPoUserActivityPage from './admin/pages/DisplayPoUserActivityPage';
 import DisplayProfilePage from './admin/pages/DisplayProfilePage';
+import DisplayProvideAccessManualPage from './admin/pages/DisplayProvideAccessManualPage';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/view-poList" element={<DisplayPoPage />} />
         <Route path="/user-activity-PO" element={<DisplayPoUserActivityPage />} />
         <Route path="/user-profile" element={<DisplayProfilePage />} />
+        <Route path="/provide-access-manual" element={<DisplayProvideAccessManualPage />} />
       </Routes>
     </Router>
   );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../tokenValidation/axiosInstance';
 import Swal from 'sweetalert2';
 import '../styles/popupForm.css';
+import LoadingSpinner from '../../components/LoadingSpinner'; // Ensure correct path
 
 const ViewPoForm = ({ id, onClose }) => {
   const [poNumber, setPoNumber] = useState('');
@@ -35,6 +36,7 @@ const ViewPoForm = ({ id, onClose }) => {
   const [purchaseDeliverToPersonId, setPurchaseDeliverToPersonId] = useState('');
   const [purchasePoDate, setPurchasePoDate] = useState('');
   const [department, setDepartment] = useState('');
+  const [loading, setLoading] = useState(true); // Add loading state
 
   const addOneDay = (dateString) => {
     const date = new Date(dateString);
@@ -44,6 +46,7 @@ const ViewPoForm = ({ id, onClose }) => {
 
   useEffect(() => {
     const fetchPoDetails = async () => {
+      setLoading(true); // Start loading
       try {
         const response = await axiosInstance.get(`/po/viewPo?id=${id}`);
         if (response.data.success) {
@@ -92,6 +95,8 @@ const ViewPoForm = ({ id, onClose }) => {
           title: 'Error',
           text: 'An unexpected error occurred. Please try again later.',
         });
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
 
@@ -101,6 +106,10 @@ const ViewPoForm = ({ id, onClose }) => {
   return (
     <div className="popup-overlay">
       <div className="popup-content">
+      {loading ? ( // Show spinner if loading
+          <LoadingSpinner />
+        ) : (
+          <>
         <button className="popup-close" onClick={onClose}>×</button>
         <h2 className='h2'>View PO</h2>
         <form className='form'>
@@ -385,6 +394,8 @@ const ViewPoForm = ({ id, onClose }) => {
           </label>
           <button type="button" className='button' onClick={onClose}>Close</button>
         </form>
+        </>
+        )}
       </div>
     </div>
   );

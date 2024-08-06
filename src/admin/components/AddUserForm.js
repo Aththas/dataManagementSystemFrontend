@@ -2,15 +2,18 @@ import React, { useState } from 'react';
 import '../styles/popupForm.css';
 import axiosInstance from '../tokenValidation/axiosInstance';
 import Swal from 'sweetalert2';
+import LoadingSpinner from '../../components/LoadingSpinner'; 
 
 const AddUserForm = ({ onClose }) => {
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
+  const [loading, setLoading] = useState(false); 
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true);
 
     try {
       const response = await axiosInstance.post('/user/addUser', {
@@ -26,7 +29,7 @@ const AddUserForm = ({ onClose }) => {
           title: 'Success',
           text: response.data.message,
         }).then(() => {
-            window.location.href = '/view-users'; // Redirect to the users list page after successful submission
+            window.location.href = '/view-users';
           });
       } else {
         Swal.fire({
@@ -42,6 +45,7 @@ const AddUserForm = ({ onClose }) => {
         text: 'An unexpected error occurred. Please try again later.',
       });
     } finally {
+      setLoading(false); 
       onClose();
     }
   };
@@ -51,51 +55,55 @@ const AddUserForm = ({ onClose }) => {
       <div className="popup-content">
         <button className="popup-close" onClick={onClose}>×</button>
         <h2 className='h2'>Add New User</h2>
-        <form onSubmit={handleSubmit} className='form'>
-          <label className='label'>
-            First Name:
-            <input
-              type="text"
-              value={firstname}
-              onChange={(e) => setFirstname(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Last Name:
-            <input
-              type="text"
-              value={lastname}
-              onChange={(e) => setLastname(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Email:
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Role:
-            <select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              required
-              className='input'
-            >
-              <option value="" disabled>Select Role</option>
-              <option value="MANAGER">MANAGER</option>
-            </select>
-          </label>
-          <button type="submit" className='button'>Submit</button>
-        </form>
+        {loading ? (
+          <LoadingSpinner /> 
+        ) : (
+          <form onSubmit={handleSubmit} className='form'>
+            <label className='label'>
+              First Name:
+              <input
+                type="text"
+                value={firstname}
+                onChange={(e) => setFirstname(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              Last Name:
+              <input
+                type="text"
+                value={lastname}
+                onChange={(e) => setLastname(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              Email:
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              Role:
+              <select
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                required
+                className='input'
+              >
+                <option value="" disabled>Select Role</option>
+                <option value="MANAGER">MANAGER</option>
+              </select>
+            </label>
+            <button type="submit" className='button'>Submit</button>
+          </form>
+        )}
       </div>
     </div>
   );
