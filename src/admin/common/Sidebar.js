@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../tokenValidation/axiosInstance';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThLarge, faBook, faUser, faUserCircle, faClipboardList, faCog, faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
+import { faThLarge, faBook, faUser, faClipboardList, faCog, faChevronDown, faChevronUp, faCheckCircle, faShieldAlt, faKey } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
   const [user, setUser] = useState(null);
   const [isAmcSublistOpen, setIsAmcSublistOpen] = useState(false);
   const [isPoSublistOpen, setIsPoSublistOpen] = useState(false);
+  const [isAccessSublistOpen, setIsAccessSublistOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -31,6 +32,10 @@ const Sidebar = () => {
 
   const togglePoSublist = () => {
     setIsPoSublistOpen(!isPoSublistOpen);
+  };
+
+  const toggleAccessSublist = () => {
+    setIsAccessSublistOpen(!isAccessSublistOpen);
   };
 
   return (
@@ -67,7 +72,7 @@ const Sidebar = () => {
               </li>
               <li>
                 <a href="/user-activity-amc" style={{ marginLeft: '27px' }}>
-                  <FontAwesomeIcon icon={faUserCircle} className="icon" />
+                  <FontAwesomeIcon icon={faCheckCircle} className="icon" />
                   <div className="title">User Activity AMC</div>
                 </a>
               </li>
@@ -91,8 +96,38 @@ const Sidebar = () => {
               </li>
               <li>
                 <a href="/user-activity-PO" style={{ marginLeft: '27px' }}>
-                  <FontAwesomeIcon icon={faUserCircle} className="icon" />
+                  <FontAwesomeIcon icon={faCheckCircle} className="icon" />
                   <div className="title">User Activity PO</div>
+                </a>
+              </li>
+            </ul>
+          )}
+        </li>
+        <li style={{ height: isAccessSublistOpen ? 'auto' : '50px', marginBottom: isAccessSublistOpen ? '10px' : '0' }}>
+          <div onClick={toggleAccessSublist} style={{ cursor: 'pointer', marginLeft: '10px', display: 'flex', alignItems: 'center' }}>
+            <FontAwesomeIcon icon={faShieldAlt} className="icon" style={{ color: 'white'}} />
+            <div className="title" style={{ color: 'white' }}>
+              Access Controls <FontAwesomeIcon icon={isAccessSublistOpen ? faChevronUp : faChevronDown} className="icon"/>
+            </div>
+          </div>
+          {isAccessSublistOpen && (
+            <ul className="sublist">
+              <li style={{border: 'none'}}>
+                <a href="/provide-access-manual" style={{ marginLeft: '20px'}}>
+                  <FontAwesomeIcon icon={faKey} className="icon" />
+                  <div className="title" style={{fontSize:'10px'}}>Provide Access - By Manual</div>
+                </a>
+              </li>
+              <li style={{border: 'none'}}>
+                <a href="/user-group" style={{ marginLeft: '30px'}}>
+                  <FontAwesomeIcon icon={faKey} className="icon" />
+                  <div className="title" style={{fontSize:'10px'}}>Provide Access - By Request</div>
+                </a>
+              </li>
+              <li>
+                <a href="/user-activity-PO" style={{ marginLeft: '30px' }}>
+                  <FontAwesomeIcon icon={faKey} className="icon" />
+                  <div className="title" style={{fontSize:'10px'}}>Request Access</div>
                 </a>
               </li>
             </ul>

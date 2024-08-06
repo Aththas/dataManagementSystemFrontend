@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../tokenValidation/axiosInstance';
 import Swal from 'sweetalert2';
 import '../styles/popupForm.css';
+import LoadingSpinner from '../../components/LoadingSpinner'; // Ensure correct path to your LoadingSpinner component
 
 const UpdateAmcForm = ({ id, onClose }) => {
   const [userDivision, setUserDivision] = useState('');
@@ -15,9 +16,11 @@ const UpdateAmcForm = ({ id, onClose }) => {
   const [amcValueLKR, setAmcValueLKR] = useState('');
   const [amcPercentageUponPurchasePrice, setAmcPercentageUponPurchasePrice] = useState('');
   const [category, setCategory] = useState('');
+  const [loading, setLoading] = useState(false); // State for managing loading status
 
   useEffect(() => {
     const fetchAmcDetails = async () => {
+      setLoading(true); // Start loading
       try {
         console.log("up "+ id);
         const response = await axiosInstance.get(`/amc/viewAmc?id=${id}`);
@@ -47,6 +50,8 @@ const UpdateAmcForm = ({ id, onClose }) => {
           title: 'Error',
           text: 'An unexpected error occurred. Please try again later.',
         });
+      } finally {
+        setLoading(false); // Stop loading
       }
     };
 
@@ -55,7 +60,7 @@ const UpdateAmcForm = ({ id, onClose }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    setLoading(true); // Start loading
     try {
       const response = await axiosInstance.put(`/amc/updateMyAmc?id=${id}`, {
         userDivision,
@@ -94,6 +99,7 @@ const UpdateAmcForm = ({ id, onClose }) => {
         text: errorMessage,
       });
     } finally {
+      setLoading(false); // Stop loading
       onClose(); // Close the popup form regardless of success or failure
     }
   };
@@ -103,123 +109,127 @@ const UpdateAmcForm = ({ id, onClose }) => {
       <div className="popup-content">
         <button className="popup-close" onClick={onClose}>×</button>
         <h2 className='h2'>Update AMC</h2>
-        <form onSubmit={handleSubmit} className='form'>
-          <label className='label'>
-            User Division:
-            <input
-              type="text"
-              value={userDivision}
-              onChange={(e) => setUserDivision(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Contract Name:
-            <input
-              type="text"
-              value={contractName}
-              onChange={(e) => setContractName(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Existing Partner:
-            <input
-              type="text"
-              value={existingPartner}
-              onChange={(e) => setExistingPartner(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Initial Cost (USD):
-            <input
-              type="number"
-              value={initialCostUSD}
-              onChange={(e) => setInitialCostUSD(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Initial Cost (LKR):
-            <input
-              type="number"
-              value={initialCostLKR}
-              onChange={(e) => setInitialCostLKR(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Start Date:
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            End Date:
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            AMC Value (USD):
-            <input
-              type="number"
-              value={amcValueUSD}
-              onChange={(e) => setAmcValueUSD(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            AMC Value (LKR):
-            <input
-              type="number"
-              value={amcValueLKR}
-              onChange={(e) => setAmcValueLKR(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            AMC Percentage Upon Purchase Price:
-            <input
-              type="number"
-              value={amcPercentageUponPurchasePrice}
-              onChange={(e) => setAmcPercentageUponPurchasePrice(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Category:
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              required
-              className='input'
-            >
-              <option value="" disabled >Select Category</option>
-              <option value="L">L</option>
-              <option value="P">P</option>
-              <option value="H">H</option>
-            </select>
-          </label>
-          <button type="submit" className='button'>Submit</button>
-        </form>
+        {loading ? (
+          <LoadingSpinner />
+        ) : (
+          <form onSubmit={handleSubmit} className='form'>
+            <label className='label'>
+              User Division:
+              <input
+                type="text"
+                value={userDivision}
+                onChange={(e) => setUserDivision(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              Contract Name:
+              <input
+                type="text"
+                value={contractName}
+                onChange={(e) => setContractName(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              Existing Partner:
+              <input
+                type="text"
+                value={existingPartner}
+                onChange={(e) => setExistingPartner(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              Initial Cost (USD):
+              <input
+                type="number"
+                value={initialCostUSD}
+                onChange={(e) => setInitialCostUSD(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              Initial Cost (LKR):
+              <input
+                type="number"
+                value={initialCostLKR}
+                onChange={(e) => setInitialCostLKR(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              Start Date:
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              End Date:
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              AMC Value (USD):
+              <input
+                type="number"
+                value={amcValueUSD}
+                onChange={(e) => setAmcValueUSD(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              AMC Value (LKR):
+              <input
+                type="number"
+                value={amcValueLKR}
+                onChange={(e) => setAmcValueLKR(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              AMC Percentage Upon Purchase Price:
+              <input
+                type="number"
+                value={amcPercentageUponPurchasePrice}
+                onChange={(e) => setAmcPercentageUponPurchasePrice(e.target.value)}
+                required
+                className='input'
+              />
+            </label>
+            <label className='label'>
+              Category:
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+                className='input'
+              >
+                <option value="" disabled >Select Category</option>
+                <option value="L">L</option>
+                <option value="P">P</option>
+                <option value="H">H</option>
+              </select>
+            </label>
+            <button type="submit" className='button'>Submit</button>
+          </form>
+        )}
       </div>
     </div>
   );

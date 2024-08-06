@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../tokenValidation/axiosInstance';
 import Swal from 'sweetalert2';
+import LoadingSpinner from '../../components/LoadingSpinner'; // Ensure correct path
 import '../styles/popupForm.css';
 
 const UpdateUserForm = ({ id, onClose }) => {
@@ -8,9 +9,11 @@ const UpdateUserForm = ({ id, onClose }) => {
   const [lastname, setLastname] = useState('');
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
+  const [loading, setLoading] = useState(false); // Loading state
 
   useEffect(() => {
     const fetchUserDetails = async () => {
+      setLoading(true); // Start loading
       try {
         const response = await axiosInstance.get(`/user/viewUser?id=${id}`);
         if (response.data.success) {
@@ -32,6 +35,8 @@ const UpdateUserForm = ({ id, onClose }) => {
           title: 'Error',
           text: 'An unexpected error occurred. Please try again later.',
         });
+      } finally {
+        setLoading(false); // End loading
       }
     };
 
@@ -40,6 +45,7 @@ const UpdateUserForm = ({ id, onClose }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true); // Start loading
 
     try {
       const response = await axiosInstance.put(`/user/updateUser?id=${id}`, {
@@ -72,6 +78,7 @@ const UpdateUserForm = ({ id, onClose }) => {
         text: errorMessage,
       });
     } finally {
+      setLoading(false); // End loading
       onClose(); // Close the popup form regardless of success or failure
     }
   };
@@ -79,6 +86,7 @@ const UpdateUserForm = ({ id, onClose }) => {
   return (
     <div className="popup-overlay">
       <div className="popup-content">
+        {loading && <LoadingSpinner />} {/* Render spinner if loading */}
         <button className="popup-close" onClick={onClose}>×</button>
         <h2 className='h2'>Update User</h2>
         <form onSubmit={handleSubmit} className='form'>

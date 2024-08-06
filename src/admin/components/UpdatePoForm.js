@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../tokenValidation/axiosInstance';
 import Swal from 'sweetalert2';
+import LoadingSpinner from '../../components/LoadingSpinner'; // Ensure correct path
 import '../styles/popupForm.css';
 
 const UpdatePoForm = ({ id, onClose }) => {
-    console.log("up "+ id);
   const [poNumber, setPoNumber] = useState('');
   const [creationDate, setCreationDate] = useState('');
   const [poCreationDate, setPoCreationDate] = useState('');
@@ -37,15 +37,17 @@ const UpdatePoForm = ({ id, onClose }) => {
   const [purchasePoDate, setPurchasePoDate] = useState('');
   const [department, setDepartment] = useState('');
   const [poFile, setPoFile] = useState(null);
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const addOneDay = (dateString) => {
     const date = new Date(dateString);
     date.setDate(date.getDate() + 1);
-    return date.toISOString().split('T')[0]; // Return date in 'yyyy-MM-dd' format
+    return date.toISOString().split('T')[0];
   };
 
   useEffect(() => {
     const fetchPoDetails = async () => {
+      setLoading(true); // Start loading
       try {
         const response = await axiosInstance.get(`/po/viewPo?id=${id}`);
         if (response.data.success) {
@@ -94,6 +96,8 @@ const UpdatePoForm = ({ id, onClose }) => {
           title: 'Error',
           text: 'An unexpected error occurred. Please try again later.',
         });
+      } finally {
+        setLoading(false); // End loading
       }
     };
 
@@ -102,6 +106,7 @@ const UpdatePoForm = ({ id, onClose }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLoading(true); // Start loading
 
     const formData = new FormData();
     formData.append('poNumber', poNumber);
@@ -152,7 +157,7 @@ const UpdatePoForm = ({ id, onClose }) => {
           title: 'Success',
           text: response.data.message,
         }).then(() => {
-          window.location.href = '/view-poList'; // Redirect to the PO list page after successful update
+          window.location.href = '/view-poList'; // Redirect after successful update
         });
       } else {
         Swal.fire({
@@ -169,7 +174,8 @@ const UpdatePoForm = ({ id, onClose }) => {
         text: errorMessage,
       });
     } finally {
-      onClose(); // Close the popup form regardless of success or failure
+      setLoading(false); // End loading
+      onClose(); // Close the popup form
     }
   };
 
@@ -178,6 +184,7 @@ const UpdatePoForm = ({ id, onClose }) => {
       <div className="popup-content">
         <button className="popup-close" onClick={onClose}>×</button>
         <h2 className='h2'>Update PO</h2>
+        {loading && <LoadingSpinner />}
         <form onSubmit={handleSubmit} className='form'>
           <label className='label'>
             PO Number:
