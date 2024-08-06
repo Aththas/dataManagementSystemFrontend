@@ -214,7 +214,7 @@ const UpdateAmcForm = ({ id, onClose }) => {
             >
               <option value="" disabled >Select Category</option>
               <option value="L">L</option>
-              <option value="C">P</option>
+              <option value="P">P</option>
               <option value="H">H</option>
             </select>
           </label>

@@ -182,12 +182,14 @@ const ViewUsers = () => {
               <td>{user.role}</td>
               <td>
                 <button onClick={() => handleEdit(user.id)} className="btn-edit">Edit</button>
-                <button
-                  onClick={() => handleToggleEnableDisable(user)}
-                  className={`${user.email.endsWith('null') ? 'btn-enabled' : 'btn-disabled'}`}
-                >
-                  {user.email.endsWith('null') ? 'Enable' : 'Disable'}
-                </button>
+                {user.role !== "ADMIN" && (
+                  <>
+                    <button onClick={() => handleToggleEnableDisable(user)} 
+                    className={`${user.email.endsWith('null') ? 'btn-enabled' : 'btn-disabled'}`}>
+                        {user.email.endsWith('null') ? 'Enable' : 'Disable'}
+                    </button>
+                  </>
+                )}
               </td>
             </tr>
           ))
