@@ -34,6 +34,8 @@ const ViewPoUserActivity = () => {
     }
   }, [page, size, sortBy, ascending, filter]);
 
+  
+
   useEffect(() => {
     fetchUserActivityList();
   }, [fetchUserActivityList]);

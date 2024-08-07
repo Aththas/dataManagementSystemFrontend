@@ -121,6 +121,66 @@ const ViewUsers = () => {
     }
   };
 
+  const handleEnablePermission = async (userId) => {
+    try {
+      const response = await axiosInstance.put(`/user/enableCsvPermission?id=${userId}`);
+      if (response.data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: response.data.message,
+        });
+        fetchUsers();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: response.data.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred. Please try again later.',
+      });
+    }
+  };
+
+  const handleDisablePermission = async (userId) => {
+    try {
+      const response = await axiosInstance.put(`/user/disableCsvPermission?id=${userId}`);
+      if (response.data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: response.data.message,
+        });
+        fetchUsers();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: response.data.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred. Please try again later.',
+      });
+    }
+  };
+
+  const handleToggleViewPermission = async (user) => {
+    if (user.viewPermission) {
+      handleDisablePermission(user.id);
+    } else {
+      handleEnablePermission(user.id);
+    }
+  };
+
   const handleSearch = (event) => {
     setSearchQuery(event.target.value.toLowerCase());
   };
@@ -168,36 +228,58 @@ const ViewUsers = () => {
             <td onClick={() => handleSort('lastname')}>Last Name</td>
             <td onClick={() => handleSort('email')}>Email</td>
             <td onClick={() => handleSort('role')}>Role</td>
-            <td>Actions</td>
+            <td>Edit</td>
+            <td>Status</td>
+            <td>CSV Access</td>
           </tr>
         </thead>
         <tbody>
           {filteredUsers.length > 0 ? (
             filteredUsers.map((user, index) => (
-            <tr key={user.id}> {/* Use a unique key based on user.id */}
-              <td>{index + 1 + page * size}</td>
-              <td>{user.firstname}</td>
-              <td>{user.lastname}</td>
-              <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>
-                <button onClick={() => handleEdit(user.id)} className="btn-edit">Edit</button>
-                {user.role !== "ADMIN" && (
-                  <>
-                    <button onClick={() => handleToggleEnableDisable(user)} 
-                    className={`${user.email.endsWith('null') ? 'btn-enabled' : 'btn-disabled'}`}>
-                        {user.email.endsWith('null') ? 'Enable' : 'Disable'}
-                    </button>
-                  </>
-                )}
-              </td>
+              <tr key={user.id}> {/* Use a unique key based on user.id */}
+                <td>{index + 1 + page * size}</td>
+                <td>{user.firstname}</td>
+                <td>{user.lastname}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>
+                  <button onClick={() => handleEdit(user.id)} className="btn-edit">Edit</button>
+                </td>
+                <td>
+                  {user.role !== "ADMIN" ? (
+                    <>
+                      <button onClick={() => handleToggleEnableDisable(user)} 
+                        className={`${user.email.endsWith('null') ? 'btn-disabled':'btn-enabled'}`}>
+                        {user.email.endsWith('null') ? 'Disabled' : 'Enabled'}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button className="btn-enabled">Enabled</button>
+                    </>
+                  )}
+                </td>
+                <td>
+                  {user.role !== "ADMIN" ? (
+                    <>
+                      <button onClick={() => handleToggleViewPermission(user)} 
+                        className={`${user.viewPermission ? 'btn-enabled' : 'btn-disabled'}`}>
+                        {user.viewPermission ? 'Yes' : 'No'}
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button className="btn-enabled">Yes</button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="7">No Users found</td>
             </tr>
-          ))
-        ):(
-          <tr>
-            <td colSpan="6">No Users found</td>
-          </tr>
-        )}
+          )}
         </tbody>
       </table>
       <div className="pagination">

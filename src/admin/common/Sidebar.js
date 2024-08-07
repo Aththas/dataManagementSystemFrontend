@@ -125,7 +125,7 @@ const Sidebar = () => {
                 </a>
               </li>
               <li>
-                <a href="/user-activity-PO" style={{ marginLeft: '30px' }}>
+                <a href="/access-request" style={{ marginLeft: '30px' }}>
                   <FontAwesomeIcon icon={faKey} className="icon" />
                   <div className="title" style={{fontSize:'10px'}}>Request Access</div>
                 </a>
