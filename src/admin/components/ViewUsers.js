@@ -4,6 +4,8 @@ import './ViewUser.css';
 import AddUserForm from './AddUserForm';
 import UpdateUserForm from './UpdateUserForm';
 import Swal from 'sweetalert2';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faCheckCircle, faTimesCircle, faUserCheck, faUserTimes} from '@fortawesome/free-solid-svg-icons';
 
 const ViewUsers = () => {
   const [users, setUsers] = useState([]);
@@ -121,6 +123,66 @@ const ViewUsers = () => {
     }
   };
 
+  const handleEnablePermission = async (userId) => {
+    try {
+      const response = await axiosInstance.put(`/user/enableCsvPermission?id=${userId}`);
+      if (response.data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: response.data.message,
+        });
+        fetchUsers();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: response.data.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred. Please try again later.',
+      });
+    }
+  };
+
+  const handleDisablePermission = async (userId) => {
+    try {
+      const response = await axiosInstance.put(`/user/disableCsvPermission?id=${userId}`);
+      if (response.data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: response.data.message,
+        });
+        fetchUsers();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: response.data.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred. Please try again later.',
+      });
+    }
+  };
+
+  const handleToggleViewPermission = async (user) => {
+    if (user.viewPermission) {
+      handleDisablePermission(user.id);
+    } else {
+      handleEnablePermission(user.id);
+    }
+  };
+
   const handleSearch = (event) => {
     setSearchQuery(event.target.value.toLowerCase());
   };
@@ -168,36 +230,56 @@ const ViewUsers = () => {
             <td onClick={() => handleSort('lastname')}>Last Name</td>
             <td onClick={() => handleSort('email')}>Email</td>
             <td onClick={() => handleSort('role')}>Role</td>
-            <td>Actions</td>
+            <td>Edit</td>
+            <td>Status</td>
+            <td>CSV Access</td>
           </tr>
         </thead>
         <tbody>
           {filteredUsers.length > 0 ? (
             filteredUsers.map((user, index) => (
-            <tr key={user.id}> {/* Use a unique key based on user.id */}
-              <td>{index + 1 + page * size}</td>
-              <td>{user.firstname}</td>
-              <td>{user.lastname}</td>
-              <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>
-                <button onClick={() => handleEdit(user.id)} className="btn-edit">Edit</button>
-                {user.role !== "ADMIN" && (
-                  <>
-                    <button onClick={() => handleToggleEnableDisable(user)} 
-                    className={`${user.email.endsWith('null') ? 'btn-enabled' : 'btn-disabled'}`}>
-                        {user.email.endsWith('null') ? 'Enable' : 'Disable'}
-                    </button>
-                  </>
-                )}
-              </td>
+              <tr key={user.id}> {/* Use a unique key based on user.id */}
+                <td>{index + 1 + page * size}</td>
+                <td>{user.firstname}</td>
+                <td>{user.lastname}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+                <td>
+                  <FontAwesomeIcon icon={faEdit} onClick={() => handleEdit(user.id)} style={{color:"#4CAF50", cursor:'pointer'}}/>
+                </td>
+                <td>
+                  {user.role !== "ADMIN" ? (
+                    <>
+                        {user.email.endsWith('null') 
+                        ? <FontAwesomeIcon icon={faTimesCircle} onClick={() => handleToggleEnableDisable(user)} style={{color:"#F44336", cursor:'pointer'}}/>
+                        : <FontAwesomeIcon icon={faCheckCircle} onClick={() => handleToggleEnableDisable(user)} style={{color:"#4CAF50", cursor:'pointer'}}/>}
+                    </>
+                  ) : (
+                    <>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{color:"#4CAF50", cursor:'pointer'}}/>
+                    </>
+                  )}
+                </td>
+                <td>
+                  {user.role !== "ADMIN" ? (
+                    <>
+                        {user.viewPermission 
+                        ? <FontAwesomeIcon icon={faUserCheck} onClick={() => handleToggleViewPermission(user)} style={{color:"#4CAF50", cursor:'pointer'}}/> 
+                        : <FontAwesomeIcon icon={faUserTimes} onClick={() => handleToggleViewPermission(user)} style={{color:"#F44336", cursor:'pointer'}}/>}
+                    </>
+                  ) : (
+                    <>
+                      <FontAwesomeIcon icon={faUserCheck} style={{color:"#4CAF50", cursor:'pointer'}}/>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="7">No Users found</td>
             </tr>
-          ))
-        ):(
-          <tr>
-            <td colSpan="6">No Users found</td>
-          </tr>
-        )}
+          )}
         </tbody>
       </table>
       <div className="pagination">

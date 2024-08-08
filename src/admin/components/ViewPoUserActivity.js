@@ -3,6 +3,8 @@ import axiosInstance from '../tokenValidation/axiosInstance';
 import './ViewUser.css';
 import csv from '../img/csv.png';
 import ViewPoUserActivityForm from './ViewPoUserActivityForm';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 const ViewPoUserActivity = () => {
   const [userActivityList, setUserActivityList] = useState([]);
@@ -33,6 +35,8 @@ const ViewPoUserActivity = () => {
       setUserActivityList([]); // Set to empty array on error
     }
   }, [page, size, sortBy, ascending, filter]);
+
+  
 
   useEffect(() => {
     fetchUserActivityList();
@@ -74,7 +78,8 @@ const ViewPoUserActivity = () => {
   const filteredUserActivityList = userActivityList.filter(activity =>
     activity.user.toLowerCase().includes(searchQuery) ||
     activity.action.toLowerCase().includes(searchQuery) ||
-    activity.version.toLowerCase().includes(searchQuery)
+    activity.version.toLowerCase().includes(searchQuery) ||
+    new Date(activity.dateTime).toLocaleString().toLowerCase().includes(searchQuery)
   );
 
   return (
@@ -119,12 +124,12 @@ const ViewPoUserActivity = () => {
         <thead>
           <tr>
             <td onClick={() => handleSort('id')}>#</td>
+            <td onClick={() => handleSort('dateTime')}>Timestamp</td>
             <td onClick={() => handleSort('user')}>User</td>
             <td onClick={() => handleSort('action')}>Action</td>
             <td onClick={() => handleSort('version')}>Version</td>
             <td onClick={() => handleSort('beforeFile')}>Before File</td>
             <td onClick={() => handleSort('afterFile')}>After File</td>
-            <td onClick={() => handleSort('dateTime')}>Timestamp</td>
             <td>Actions</td>
           </tr>
         </thead>
@@ -133,6 +138,7 @@ const ViewPoUserActivity = () => {
             filteredUserActivityList.map((activity, index) => (
               <tr key={activity.id || index}>
                 <td>{index + 1 + page * size}</td>
+                <td>{new Date(activity.dateTime).toLocaleString()}</td>
                 <td>{activity.user}</td>
                 <td>{activity.action}</td>
                 <td>{activity.version}</td>
@@ -146,15 +152,8 @@ const ViewPoUserActivity = () => {
                     <img src={csv} alt="csv file" className="tbl-user" />
                   </a>
                 </td>
-                <td>{new Date(activity.dateTime).toLocaleString()}</td>
                 <td>
-                  <button 
-                    onClick={() => handleView(activity.id)} 
-                    className="btn-view"
-                    style={{ width: '60px' }}
-                  >
-                    View
-                  </button>
+                    <FontAwesomeIcon icon={faEye} onClick={() => handleView(activity.id)} style={{color:"#2196F3", backgroundColor: 'transparent', cursor:'pointer'}}/>
                 </td>
               </tr>
             ))

@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '../../tokenValidation/axiosInstance';
 import '../ViewUser.css';
-import Swal from 'sweetalert2';
-import AddUsersToGroup from './AddUsersToGroup';
+import SendRequest from './SendRequest';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faClock } from '@fortawesome/free-solid-svg-icons';
 
-const ProvideAccessManualForm = () => {
+const AccessRequestForm = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
@@ -15,12 +14,17 @@ const ProvideAccessManualForm = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filter, setFilter] = useState('all');
 
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await axiosInstance.get(`/grp/getAllMyGrpUsers?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`);
+      const endpoint = filter === 'all'
+        ? `/grp/viewMyAccessGrps?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`
+        : `/grp/viewAccessRequest-Requester?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`;
+      const response = await axiosInstance.get(endpoint);
+      console.log(response);
       setUsers(response.data.data || []); // Ensure users is always an array
-      if(response.data.data === null){
+      if (response.data.success !== null) {
         setTotalPages(1);
       } else {
         setTotalPages(Math.ceil((response.data.message || 0) / size));
@@ -29,7 +33,7 @@ const ProvideAccessManualForm = () => {
       console.error('Error fetching users:', error);
       setUsers([]); // Ensure users is an empty array on error
     }
-  }, [page, size, sortBy, ascending]);
+  }, [page, size, sortBy, ascending, filter]);
 
   useEffect(() => {
     fetchUsers();
@@ -49,70 +53,47 @@ const ProvideAccessManualForm = () => {
     setPage(0);
   };
 
-  const handleCloseForm = () => {
-    setShowAddForm(false);
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+    setPage(0);
   };
 
-  const handleRemoveUser = async (userId) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'You won\'t be able to revert this!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, remove it!',
-      cancelButtonText: 'No, cancel!',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await axiosInstance.delete(`/grp/removeFromGrp?id=${userId}`);
-          if (response.data.success) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Removed!',
-              text: response.data.message,
-            });
-            fetchUsers();
-          } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: response.data.message,
-            });
-          }
-        } catch (error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An unexpected error occurred. Please try again later.',
-          });
-        }
-      }
-    });
+  const handleCloseForm = () => {
+    setShowAddForm(false);
   };
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value.toLowerCase());
   };
 
-  const filteredUsers = users.filter(user =>
-    user.email.toLowerCase().includes(searchQuery)
+  const filteredUsers = users.filter(
+    filter === 'all'
+      ? (user) => user.userGroups?.toLowerCase().includes(searchQuery)
+      : (user) => user.grpName?.toLowerCase().includes(searchQuery) ||
+                  user.reason?.toLowerCase().includes(searchQuery) ||
+                  user.status?.toLowerCase().includes(searchQuery)
   );
 
   return (
     <div className="view-users">
       <div className="heading">
-        <h2>Who can view my activities</h2>
+        <h2>My Access Groups</h2>
       </div>
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="search-input"
-        />
+      <div className="heading">
+        <div className="pagination">
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="search-input"
+            />
+          </div>
+        </div>
+        <div className="pagination">
+          <button onClick={() => setShowAddForm(true)} className="btn">Request an Access</button>
+        </div>
       </div>
       <div className="heading">
         <div className="pagination">
@@ -126,30 +107,50 @@ const ProvideAccessManualForm = () => {
             </select>
           </label>
         </div>
-        <button onClick={() => setShowAddForm(true)} className="btn">Add New User</button>
+        <div className="pagination">
+          <label>
+            Filter:
+            <select value={filter} onChange={handleFilterChange}>
+              <option value="all">My Access</option>
+              <option value="my">My Request</option>
+            </select>
+          </label>
+        </div>
       </div>
       <table>
         <thead>
           <tr>
             <td onClick={() => handleSort('id')}>#</td>
-            <td>Email</td>
-            <td>Actions</td>
+            {filter === 'all' ? (
+              <td>User Group</td>
+            ) : (
+              <>
+                <td>Reason</td>
+                <td>User Group</td>
+                <td>Status</td>
+              </>
+            )}
           </tr>
         </thead>
         <tbody>
           {filteredUsers.length > 0 ? (
             filteredUsers.map((user, index) => (
-              <tr key={user.userId}> {/* Use a unique key based on user.id */}
+              <tr key={user.id}> {/* Use a unique key based on user.id */}
                 <td>{index + 1 + page * size}</td>
-                <td>{user.email}</td>
-                <td>
-                  <FontAwesomeIcon icon={faTrash} onClick={() => handleRemoveUser(user.userId)} style={{color:"#F44336", cursor:'pointer'}}/>
-                </td>
+                {filter === 'all' ? (
+                  <td>{user.userGroups}</td>
+                ) : (
+                  <>
+                    <td>{user.reason}</td>
+                    <td>{user.grpName}</td>
+                    <td><FontAwesomeIcon icon={faClock} style={{color:"#FFC107"}}/></td>
+                  </>
+                )}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="3">No Users found</td>
+              <td colSpan={filter === 'all' ? 2 : 4}>No Requests found</td>
             </tr>
           )}
         </tbody>
@@ -165,9 +166,9 @@ const ProvideAccessManualForm = () => {
       </div>
 
       {/* Conditionally render AddUserForm */}
-      {showAddForm && <AddUsersToGroup onClose={handleCloseForm} />}
+      {showAddForm && <SendRequest onClose={handleCloseForm} />}
     </div>
   );
 };
 
-export default ProvideAccessManualForm;
+export default AccessRequestForm;

@@ -50,7 +50,7 @@ const Topbar = () => {
     <div className="top-bar">
       <div className="admin">
         <div className="title">
-          Admin Panel : Welcome back {user ? user.email : 'Admin'}
+            Admin Panel : Welcome back {user ? `${user.firstname} ${user.lastname}` : 'connection issue...'}
         </div>
       </div>
       <div className="dropdown">
