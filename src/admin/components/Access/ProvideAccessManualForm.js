@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import AddUsersToGroup from './AddUsersToGroup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const ProvideAccessManualForm = () => {
   const [users, setUsers] = useState([]);
@@ -15,6 +16,7 @@ const ProvideAccessManualForm = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -65,6 +67,7 @@ const ProvideAccessManualForm = () => {
       cancelButtonText: 'No, cancel!',
     }).then(async (result) => {
       if (result.isConfirmed) {
+        setLoading(true);
         try {
           const response = await axiosInstance.delete(`/grp/removeFromGrp?id=${userId}`);
           if (response.data.success) {
@@ -87,6 +90,8 @@ const ProvideAccessManualForm = () => {
             title: 'Error',
             text: 'An unexpected error occurred. Please try again later.',
           });
+        }finally {
+          setLoading(false);
         }
       }
     });
@@ -102,6 +107,7 @@ const ProvideAccessManualForm = () => {
 
   return (
     <div className="view-users">
+      {loading && <LoadingSpinner />}
       <div className="heading">
         <h2>Who can view my activities</h2>
       </div>
