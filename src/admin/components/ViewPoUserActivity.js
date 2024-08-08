@@ -3,8 +3,10 @@ import axiosInstance from '../tokenValidation/axiosInstance';
 import './ViewUser.css';
 import csv from '../img/csv.png';
 import ViewPoUserActivityForm from './ViewPoUserActivityForm';
+import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const ViewPoUserActivity = () => {
   const [userActivityList, setUserActivityList] = useState([]);
@@ -17,6 +19,7 @@ const ViewPoUserActivity = () => {
   const [currentActivityId, setCurrentActivityId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('all');
+  const [user, setUser] = useState(null);
 
   const fetchUserActivityList = useCallback(async () => {
     try {
@@ -36,11 +39,24 @@ const ViewPoUserActivity = () => {
     }
   }, [page, size, sortBy, ascending, filter]);
 
+  const fetchUserDetails = useCallback(async () => {
+    try {
+      const response = await axiosInstance.get('/auth/user-info');
+      if (response.data.success) {
+        setUser(response.data.data);
+      } else {
+        console.error('Error fetching user details:', response.data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    }
+  },[]);
   
 
   useEffect(() => {
     fetchUserActivityList();
-  }, [fetchUserActivityList]);
+    fetchUserDetails();
+  }, [fetchUserActivityList,fetchUserDetails]);
 
   const handleSort = (field) => {
     setSortBy(field);
@@ -81,6 +97,42 @@ const ViewPoUserActivity = () => {
     activity.version.toLowerCase().includes(searchQuery) ||
     new Date(activity.dateTime).toLocaleString().toLowerCase().includes(searchQuery)
   );
+
+  const handleFile = async (filePath, version, prefix) => {
+    try {
+      const response = await axios.get(filePath, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        responseType: 'blob', // Handles binary data
+      });
+  
+      // Create a URL for the file with the correct MIME type
+      const fileURL = window.URL.createObjectURL(new Blob([response.data], { type: 'text/csv' }));
+  
+      // Construct the filename dynamically with the prefix
+      const filename = `${prefix} ${version}.csv`;
+  
+      // Create a temporary link element to trigger the download
+      const link = document.createElement('a');
+      link.href = fileURL;
+      link.download = filename; // Use the dynamically constructed filename
+      document.body.appendChild(link);
+      link.click(); // Trigger the download
+      document.body.removeChild(link); // Clean up
+  
+    } catch (error) {
+      if (error.response) {
+        console.error('Response error:', error.response.data);
+        console.error('Status:', error.response.status);
+        console.error('Headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('Request error:', error.request);
+      } else {
+        console.error('Error:', error.message);
+      }
+    }
+  };
 
   return (
     <div className="view-users">
@@ -143,14 +195,44 @@ const ViewPoUserActivity = () => {
                 <td>{activity.action}</td>
                 <td>{activity.version}</td>
                 <td>
-                  <a href={activity.beforeFile} target='_blank' rel="noopener noreferrer">
-                    <img src={csv} alt="csv file" className="tbl-user" />
-                  </a>
+                  {user && user.viewPermission ? (
+                   <img src={csv} alt="csv file" className="tbl-user" 
+                   onClick={() => handleFile(activity.beforeFile, activity.version, 'PO before')}
+                   style={{cursor:'pointer'}}
+                   />
+                  ) : (
+                    <img
+                      src={csv}
+                      alt="csv file"
+                      className="tbl-user"
+                      onClick={() => Swal.fire({
+                        icon: 'error',
+                        title: 'Permission Denied',
+                        text: 'You do not have permission to view this file.',
+                      })}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  )}
                 </td>
                 <td>
-                  <a href={activity.afterFile} target="_blank" rel="noopener noreferrer">
-                    <img src={csv} alt="csv file" className="tbl-user" />
-                  </a>
+                  {user && user.viewPermission ? (
+                   <img src={csv} alt="csv file" className="tbl-user" 
+                   onClick={() => handleFile(activity.afterFile, activity.version, 'PO after')}
+                   style={{cursor:'pointer'}}
+                   />
+                  ) : (
+                    <img
+                      src={csv}
+                      alt="csv file"
+                      className="tbl-user"
+                      onClick={() => Swal.fire({
+                        icon: 'error',
+                        title: 'Permission Denied',
+                        text: 'You do not have permission to view this file.',
+                      })}
+                      style={{ cursor: 'pointer' }}
+                    />
+                  )}
                 </td>
                 <td>
                     <FontAwesomeIcon icon={faEye} onClick={() => handleView(activity.id)} style={{color:"#2196F3", backgroundColor: 'transparent', cursor:'pointer'}}/>

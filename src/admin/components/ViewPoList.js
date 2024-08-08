@@ -8,6 +8,7 @@ import Swal from 'sweetalert2';
 import pdf from '../img/pdf-logo.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faEye, faTrash} from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const ViewPoList = () => {
   const [poList, setPoList] = useState([]);
@@ -142,6 +143,34 @@ const ViewPoList = () => {
     });
   };
 
+  const handleFile = async (filePath) => {
+    try {
+      const response = await axios.get(filePath, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        responseType: 'blob',
+      });
+  
+      const fileURL = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+  
+      window.open(fileURL, '_blank', 'noopener,noreferrer');
+  
+    } catch (error) {
+      if (error.response) {
+        console.error('Response error:', error.response.data);
+        console.error('Status:', error.response.status);
+        console.error('Headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('Request error:', error.request);
+      } else {
+        console.error('Error:', error.message);
+      }
+    }
+  };
+  
+
+
   const filteredPoList = poList.filter(po =>
     po.vendorName.toLowerCase().includes(searchQuery) ||
     po.approvalStatus.toLowerCase().includes(searchQuery) ||
@@ -221,9 +250,7 @@ const ViewPoList = () => {
               <td>{po.approvalStatus}</td>
               <td>{po.department}</td>
               <td>
-                  <a href={po.poFile} target='_blank' rel="noopener noreferrer">
-                    <img src={pdf} alt="pdf file" className="tbl-user" />
-                  </a>
+                  <img src={pdf} alt="pdf file" className="tbl-user" onClick={() => handleFile(po.poFile)} style={{cursor:'pointer'}}/>
               </td>
               <td>{po.user}</td>
               <td>

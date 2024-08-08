@@ -6,6 +6,7 @@ import ViewAmcUserActivityForm from './ViewAmcUserActivityForm';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const ViewAmcUserActivity = () => {
   const [userActivityList, setUserActivityList] = useState([]);
@@ -96,6 +97,42 @@ const ViewAmcUserActivity = () => {
     new Date(activity.dateTime).toLocaleString().toLowerCase().includes(searchQuery)
   );
 
+  const handleFile = async (filePath, version, prefix) => {
+    try {
+      const response = await axios.get(filePath, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+        },
+        responseType: 'blob', // Handles binary data
+      });
+  
+      // Create a URL for the file with the correct MIME type
+      const fileURL = window.URL.createObjectURL(new Blob([response.data], { type: 'text/csv' }));
+  
+      // Construct the filename dynamically with the prefix
+      const filename = `${prefix} ${version}.csv`;
+  
+      // Create a temporary link element to trigger the download
+      const link = document.createElement('a');
+      link.href = fileURL;
+      link.download = filename; // Use the dynamically constructed filename
+      document.body.appendChild(link);
+      link.click(); // Trigger the download
+      document.body.removeChild(link); // Clean up
+  
+    } catch (error) {
+      if (error.response) {
+        console.error('Response error:', error.response.data);
+        console.error('Status:', error.response.status);
+        console.error('Headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('Request error:', error.request);
+      } else {
+        console.error('Error:', error.message);
+      }
+    }
+  };
+
   return (
     <div className="view-users">
       <div className="heading">
@@ -158,9 +195,10 @@ const ViewAmcUserActivity = () => {
                 <td>{activity.version}</td>
                 <td>
                   {user && user.viewPermission ? (
-                   <a href={activity.beforeFile} target="_blank" rel="noopener noreferrer">
-                      <img src={csv} alt="csv file" className="tbl-user" />
-                    </a>
+                   <img src={csv} alt="csv file" className="tbl-user" 
+                   onClick={() => handleFile(activity.beforeFile, activity.version, 'AMC before')}
+                   style={{cursor:'pointer'}}
+                   />
                   ) : (
                     <img
                       src={csv}
@@ -177,9 +215,10 @@ const ViewAmcUserActivity = () => {
                 </td>
                 <td>
                   {user && user.viewPermission ? (
-                   <a href={activity.afterFile} target="_blank" rel="noopener noreferrer">
-                      <img src={csv} alt="csv file" className="tbl-user" />
-                    </a>
+                   <img src={csv} alt="csv file" className="tbl-user" 
+                   onClick={() => handleFile(activity.afterFile, activity.version, 'AMC after')}
+                   style={{cursor:'pointer'}}
+                   />
                   ) : (
                     <img
                       src={csv}
