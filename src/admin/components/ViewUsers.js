@@ -6,6 +6,8 @@ import UpdateUserForm from './UpdateUserForm';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faCheckCircle, faTimesCircle, faUserCheck, faUserTimes} from '@fortawesome/free-solid-svg-icons';
+import LoadingSpinner from '../../components/LoadingSpinner';
+
 
 const ViewUsers = () => {
   const [users, setUsers] = useState([]);
@@ -18,6 +20,7 @@ const ViewUsers = () => {
   const [showUpdateForm, setShowUpdateForm] = useState(false);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false); 
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -64,6 +67,7 @@ const ViewUsers = () => {
   };
 
   const handleEnableUser = async (userId) => {
+    setLoading(true);
     try {
       const response = await axiosInstance.put(`/user/enableUser?id=${userId}`);
       if (response.data.success) {
@@ -86,10 +90,13 @@ const ViewUsers = () => {
         title: 'Error',
         text: 'An unexpected error occurred. Please try again later.',
       });
+    }finally {
+      setLoading(false); // End loading
     }
   };
 
   const handleDisableUser = async (userId) => {
+    setLoading(true);
     try {
       const response = await axiosInstance.put(`/user/disableUser?id=${userId}`);
       if (response.data.success) {
@@ -112,6 +119,8 @@ const ViewUsers = () => {
         title: 'Error',
         text: 'An unexpected error occurred. Please try again later.',
       });
+    }finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -124,6 +133,7 @@ const ViewUsers = () => {
   };
 
   const handleEnablePermission = async (userId) => {
+    setLoading(true);
     try {
       const response = await axiosInstance.put(`/user/enableCsvPermission?id=${userId}`);
       if (response.data.success) {
@@ -146,10 +156,13 @@ const ViewUsers = () => {
         title: 'Error',
         text: 'An unexpected error occurred. Please try again later.',
       });
+    }finally {
+      setLoading(false); // End loading
     }
   };
 
   const handleDisablePermission = async (userId) => {
+    setLoading(true);
     try {
       const response = await axiosInstance.put(`/user/disableCsvPermission?id=${userId}`);
       if (response.data.success) {
@@ -172,6 +185,8 @@ const ViewUsers = () => {
         title: 'Error',
         text: 'An unexpected error occurred. Please try again later.',
       });
+    }finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -196,6 +211,7 @@ const ViewUsers = () => {
 
   return (
     <div className="view-users">
+      {loading && <LoadingSpinner />}
       <div className="heading">
         <h2>Users List</h2>
       </div>

@@ -50,10 +50,10 @@ const Topbar = () => {
     <div className="top-bar">
       <div className="admin">
         <div className="title">
-            Admin Panel : Welcome back {user ? `${user.firstname} ${user.lastname}` : 'connection issue...'}
+            Admin Panel : Welcome back {user ? `${user.firstname} ${user.lastname}` : 'Bad connenction...'}
         </div>
       </div>
-      <div className="dropdown">
+      <div className="dropdown" style={{marginRight:'50px'}}>
         <div className="user" onClick={handleLogout}>
           <img src={logout} alt="Logout" className="img" />
         </div>

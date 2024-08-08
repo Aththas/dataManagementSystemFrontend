@@ -4,6 +4,7 @@ import '../ViewUser.css';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
+import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const ProvideAccessRequestForm = () => {
   const [users, setUsers] = useState([]);
@@ -13,6 +14,7 @@ const ProvideAccessRequestForm = () => {
   const [ascending, setAscending] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -63,6 +65,7 @@ const ProvideAccessRequestForm = () => {
       cancelButtonText: 'No, cancel!',
     }).then(async (result) => {
       if (result.isConfirmed) {
+        setLoading(true);
         try {
           const response =  action === 'accept'
                                     ? await axiosInstance.post(url)
@@ -88,6 +91,8 @@ const ProvideAccessRequestForm = () => {
             title: 'Error',
             text: 'An unexpected error occurred. Please try again later.',
           });
+        }finally {
+          setLoading(false);
         }
       }
     });
@@ -106,6 +111,7 @@ const ProvideAccessRequestForm = () => {
 
   return (
     <div className="view-users">
+      {loading && <LoadingSpinner />}
       <div className="heading">
         <h2>Manage Access Request</h2>
       </div>
