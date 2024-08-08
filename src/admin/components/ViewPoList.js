@@ -147,7 +147,10 @@ const ViewPoList = () => {
     po.approvalStatus.toLowerCase().includes(searchQuery) ||
     po.user.toLowerCase().includes(searchQuery) ||
     po.poType.toLowerCase().includes(searchQuery) ||
-    po.department.toLowerCase().includes(searchQuery)
+    po.department.toLowerCase().includes(searchQuery) ||
+    po.poNumber.toString().toLowerCase().includes(searchQuery) ||
+    new Date(po.creationDate).toLocaleDateString().toLowerCase().includes(searchQuery) ||
+    new Date(po.poCreationDate).toLocaleDateString().toLowerCase().includes(searchQuery)
   );
 
   return (
