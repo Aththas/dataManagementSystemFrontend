@@ -23,27 +23,35 @@ const Topbar = () => {
 
     fetchUserDetails();
   }, []);
-
+  
   const handleLogout = async () => {
-    try {
-      await axiosInstance.post('/auth/logout');
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      Swal.fire({
-        icon: 'success',
-        title: 'Logged Out',
-        text: 'You have been logged out successfully.',
-      }).then(() => {
-        window.location.href = '/login';
-      });
-    } catch (error) {
-      console.error('Error during logout:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Logout Failed',
-        text: 'An error occurred during logout. Please try again.',
-      });
-    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to logout!?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes!',
+      cancelButtonText: 'No, cancel!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axiosInstance.post('/auth/logout');
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+
+            window.location.href = '/login';
+
+        } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Logout Failed',
+          text: 'An error occurred during logout. Please try again.',
+        });
+        }
+      }
+    });
   };
 
   return (
