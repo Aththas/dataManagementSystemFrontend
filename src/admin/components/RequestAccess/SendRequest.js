@@ -8,6 +8,7 @@ const SendRequest = ({ onClose }) => {
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false); // Loading state
   const [users, setUsers] = useState([]); // State to hold the user data
+  const [reason, setReason] = useState('');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -42,7 +43,8 @@ const SendRequest = ({ onClose }) => {
     setLoading(true); // Set loading to true when the request starts
 
     try {
-      const response = await axiosInstance.post('/grp/addToGrp', {
+      const response = await axiosInstance.post('/grp/addAccessRequest', {
+        reason,
         userId,
       });
 
@@ -52,7 +54,7 @@ const SendRequest = ({ onClose }) => {
           title: 'Success',
           text: response.data.message,
         }).then(() => {
-          window.location.href = '/provide-access-manual';
+          window.location.href = '/access-request';
         });
       } else {
         Swal.fire({
@@ -97,6 +99,16 @@ const SendRequest = ({ onClose }) => {
                   </option>
                 ))}
               </select>
+            </label>
+            <label className='label'>
+              Reason:
+              <input
+                type="text"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                required
+                className="input"
+              />
             </label>
             <button type="submit" className="button">Submit</button>
           </form>

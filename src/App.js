@@ -13,6 +13,7 @@ import DisplayPoUserActivityPage from './admin/pages/DisplayPoUserActivityPage';
 import DisplayProfilePage from './admin/pages/DisplayProfilePage';
 import DisplayProvideAccessManualPage from './admin/pages/DisplayProvideAccessManualPage';
 import DisplayAccessRequestPage from './admin/pages/DisplayAccessRequestPage';
+import DisplayProvideAccessRequestPage from './admin/pages/DisplayProvideAccessRequestPage';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/user-profile" element={<DisplayProfilePage />} />
         <Route path="/provide-access-manual" element={<DisplayProvideAccessManualPage />} />
         <Route path="/access-request" element={<DisplayAccessRequestPage />} />
+        <Route path="/provide-access-request" element={<DisplayProvideAccessRequestPage />} />
       </Routes>
     </Router>
   );

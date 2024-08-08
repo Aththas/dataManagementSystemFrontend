@@ -456,7 +456,7 @@ const AddPoForm = ({ onClose }) => {
                 className="input"
               />
             </label>
-            <button type="submit" className="btn btn-primary">Submit</button>
+            <button type="submit" className="button">Submit</button>
           </form>
         )}
       </div>

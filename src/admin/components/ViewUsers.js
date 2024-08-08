@@ -4,6 +4,8 @@ import './ViewUser.css';
 import AddUserForm from './AddUserForm';
 import UpdateUserForm from './UpdateUserForm';
 import Swal from 'sweetalert2';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faCheckCircle, faTimesCircle, faUserCheck, faUserTimes} from '@fortawesome/free-solid-svg-icons';
 
 const ViewUsers = () => {
   const [users, setUsers] = useState([]);
@@ -243,33 +245,31 @@ const ViewUsers = () => {
                 <td>{user.email}</td>
                 <td>{user.role}</td>
                 <td>
-                  <button onClick={() => handleEdit(user.id)} className="btn-edit">Edit</button>
+                  <FontAwesomeIcon icon={faEdit} onClick={() => handleEdit(user.id)} style={{color:"#4CAF50", cursor:'pointer'}}/>
                 </td>
                 <td>
                   {user.role !== "ADMIN" ? (
                     <>
-                      <button onClick={() => handleToggleEnableDisable(user)} 
-                        className={`${user.email.endsWith('null') ? 'btn-disabled':'btn-enabled'}`}>
-                        {user.email.endsWith('null') ? 'Disabled' : 'Enabled'}
-                      </button>
+                        {user.email.endsWith('null') 
+                        ? <FontAwesomeIcon icon={faTimesCircle} onClick={() => handleToggleEnableDisable(user)} style={{color:"#F44336", cursor:'pointer'}}/>
+                        : <FontAwesomeIcon icon={faCheckCircle} onClick={() => handleToggleEnableDisable(user)} style={{color:"#4CAF50", cursor:'pointer'}}/>}
                     </>
                   ) : (
                     <>
-                      <button className="btn-enabled">Enabled</button>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{color:"#4CAF50", cursor:'pointer'}}/>
                     </>
                   )}
                 </td>
                 <td>
                   {user.role !== "ADMIN" ? (
                     <>
-                      <button onClick={() => handleToggleViewPermission(user)} 
-                        className={`${user.viewPermission ? 'btn-enabled' : 'btn-disabled'}`}>
-                        {user.viewPermission ? 'Yes' : 'No'}
-                      </button>
+                        {user.viewPermission 
+                        ? <FontAwesomeIcon icon={faUserCheck} onClick={() => handleToggleViewPermission(user)} style={{color:"#4CAF50", cursor:'pointer'}}/> 
+                        : <FontAwesomeIcon icon={faUserTimes} onClick={() => handleToggleViewPermission(user)} style={{color:"#F44336", cursor:'pointer'}}/>}
                     </>
                   ) : (
                     <>
-                      <button className="btn-enabled">Yes</button>
+                      <FontAwesomeIcon icon={faUserCheck} style={{color:"#4CAF50", cursor:'pointer'}}/>
                     </>
                   )}
                 </td>

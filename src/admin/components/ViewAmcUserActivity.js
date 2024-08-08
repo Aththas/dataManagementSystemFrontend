@@ -4,6 +4,8 @@ import './ViewUser.css';
 import csv from '../img/csv.png';
 import ViewAmcUserActivityForm from './ViewAmcUserActivityForm';
 import Swal from 'sweetalert2';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 const ViewAmcUserActivity = () => {
   const [userActivityList, setUserActivityList] = useState([]);
@@ -90,7 +92,8 @@ const ViewAmcUserActivity = () => {
   const filteredUserActivityList = userActivityList.filter(activity =>
     activity.user.toLowerCase().includes(searchQuery) ||
     activity.action.toLowerCase().includes(searchQuery) ||
-    activity.version.toLowerCase().includes(searchQuery)
+    activity.version.toLowerCase().includes(searchQuery) ||
+    new Date(activity.dateTime).toLocaleString().toLowerCase().includes(searchQuery)
   );
 
   return (
@@ -135,13 +138,13 @@ const ViewAmcUserActivity = () => {
         <thead>
           <tr>
             <td onClick={() => handleSort('id')}>#</td>
+            <td onClick={() => handleSort('dateTime')}>Timestamp</td>
             <td onClick={() => handleSort('user')}>User</td>
             <td onClick={() => handleSort('action')}>Action</td>
             <td onClick={() => handleSort('version')}>Version</td>
             <td onClick={() => handleSort('beforeFile')}>Before File</td>
             <td onClick={() => handleSort('afterFile')}>After File</td>
-            <td onClick={() => handleSort('dateTime')}>Timestamp</td>
-            <td>Actions</td>
+            <td>View</td>
           </tr>
         </thead>
         <tbody>
@@ -149,6 +152,7 @@ const ViewAmcUserActivity = () => {
             filteredUserActivityList.map((activity, index) => (
               <tr key={activity.id || index}>
                 <td>{index + 1 + page * size}</td>
+                <td>{new Date(activity.dateTime).toLocaleString()}</td>
                 <td>{activity.user}</td>
                 <td>{activity.action}</td>
                 <td>{activity.version}</td>
@@ -190,15 +194,8 @@ const ViewAmcUserActivity = () => {
                     />
                   )}
                 </td>
-                <td>{new Date(activity.dateTime).toLocaleString()}</td>
                 <td>
-                  <button 
-                    onClick={() => handleView(activity.id)} 
-                    className="btn-view"
-                    style={{ width: '60px' }}
-                  >
-                    View
-                  </button>
+                    <FontAwesomeIcon icon={faEye} onClick={() => handleView(activity.id)} style={{color:"#2196F3", backgroundColor: 'transparent', cursor:'pointer'}}/>
                 </td>
               </tr>
             ))

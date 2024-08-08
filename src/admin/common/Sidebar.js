@@ -41,14 +41,14 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <ul>
-        <li>
+        <li style={{marginBottom:'20px'}}>
           <a href="/view-amcList">
             <FontAwesomeIcon icon={faThLarge} className="icon" />
             <div className="title">Dashboard</div>
           </a>
         </li>
         {user && user.role === 'ADMIN' && (
-          <li>
+          <li style={{marginBottom:'20px'}}>
             <a href="/view-users" style={{ marginLeft: '10px' }}>
               <FontAwesomeIcon icon={faUser} className="icon" />
               <div className="title">Users</div>
@@ -119,7 +119,7 @@ const Sidebar = () => {
                 </a>
               </li>
               <li style={{border: 'none'}}>
-                <a href="/user-group" style={{ marginLeft: '30px'}}>
+                <a href="/provide-access-request" style={{ marginLeft: '30px'}}>
                   <FontAwesomeIcon icon={faKey} className="icon" />
                   <div className="title" style={{fontSize:'10px'}}>Provide Access - By Request</div>
                 </a>

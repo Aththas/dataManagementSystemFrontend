@@ -2,6 +2,8 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '../../tokenValidation/axiosInstance';
 import '../ViewUser.css';
 import SendRequest from './SendRequest';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faClock } from '@fortawesome/free-solid-svg-icons';
 
 const AccessRequestForm = () => {
   const [users, setUsers] = useState([]);
@@ -12,12 +14,17 @@ const AccessRequestForm = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filter, setFilter] = useState('all');
 
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await axiosInstance.get(`/grp/viewMyAccessGrps?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`);
-      setUsers(response.data.data || []);// Ensure users is always an array
-      if(response.data.success !== null){
+      const endpoint = filter === 'all'
+        ? `/grp/viewMyAccessGrps?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`
+        : `/grp/viewAccessRequest-Requester?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`;
+      const response = await axiosInstance.get(endpoint);
+      console.log(response);
+      setUsers(response.data.data || []); // Ensure users is always an array
+      if (response.data.success !== null) {
         setTotalPages(1);
       } else {
         setTotalPages(Math.ceil((response.data.message || 0) / size));
@@ -26,7 +33,7 @@ const AccessRequestForm = () => {
       console.error('Error fetching users:', error);
       setUsers([]); // Ensure users is an empty array on error
     }
-  }, [page, size, sortBy, ascending]);
+  }, [page, size, sortBy, ascending, filter]);
 
   useEffect(() => {
     fetchUsers();
@@ -46,6 +53,11 @@ const AccessRequestForm = () => {
     setPage(0);
   };
 
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+    setPage(0);
+  };
+
   const handleCloseForm = () => {
     setShowAddForm(false);
   };
@@ -54,8 +66,12 @@ const AccessRequestForm = () => {
     setSearchQuery(event.target.value.toLowerCase());
   };
 
-  const filteredUsers = users.filter(user =>
-    user.userGroups.toLowerCase().includes(searchQuery)
+  const filteredUsers = users.filter(
+    filter === 'all'
+      ? (user) => user.userGroups?.toLowerCase().includes(searchQuery)
+      : (user) => user.grpName?.toLowerCase().includes(searchQuery) ||
+                  user.reason?.toLowerCase().includes(searchQuery) ||
+                  user.status?.toLowerCase().includes(searchQuery)
   );
 
   return (
@@ -63,14 +79,21 @@ const AccessRequestForm = () => {
       <div className="heading">
         <h2>My Access Groups</h2>
       </div>
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={handleSearch}
-          className="search-input"
-        />
+      <div className="heading">
+        <div className="pagination">
+          <div className="search-box">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearch}
+              className="search-input"
+            />
+          </div>
+        </div>
+        <div className="pagination">
+          <button onClick={() => setShowAddForm(true)} className="btn">Request an Access</button>
+        </div>
       </div>
       <div className="heading">
         <div className="pagination">
@@ -84,13 +107,29 @@ const AccessRequestForm = () => {
             </select>
           </label>
         </div>
-        <button onClick={() => setShowAddForm(true)} className="btn">Request an Access</button>
+        <div className="pagination">
+          <label>
+            Filter:
+            <select value={filter} onChange={handleFilterChange}>
+              <option value="all">My Access</option>
+              <option value="my">My Request</option>
+            </select>
+          </label>
+        </div>
       </div>
       <table>
         <thead>
           <tr>
             <td onClick={() => handleSort('id')}>#</td>
-            <td onClick={() => handleSort('email')}>Email</td>
+            {filter === 'all' ? (
+              <td>User Group</td>
+            ) : (
+              <>
+                <td>Reason</td>
+                <td>User Group</td>
+                <td>Status</td>
+              </>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -98,12 +137,20 @@ const AccessRequestForm = () => {
             filteredUsers.map((user, index) => (
               <tr key={user.id}> {/* Use a unique key based on user.id */}
                 <td>{index + 1 + page * size}</td>
-                <td>{user.userGroups}</td>
+                {filter === 'all' ? (
+                  <td>{user.userGroups}</td>
+                ) : (
+                  <>
+                    <td>{user.reason}</td>
+                    <td>{user.grpName}</td>
+                    <td><FontAwesomeIcon icon={faClock} style={{color:"#FFC107"}}/></td>
+                  </>
+                )}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="2">No Groups found</td>
+              <td colSpan={filter === 'all' ? 2 : 4}>No Requests found</td>
             </tr>
           )}
         </tbody>

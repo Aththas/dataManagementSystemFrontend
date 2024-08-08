@@ -5,6 +5,8 @@ import AddAmcForm from './AddAmcForm';
 import UpdateAmcForm from './UpdateAmcForm';
 import ViewAmcForm from './ViewAmcForm';
 import Swal from 'sweetalert2';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faEye, faTrash} from '@fortawesome/free-solid-svg-icons';
 
 const ViewAmcList = () => {
   const [amcList, setAmcList] = useState([]);
@@ -213,17 +215,11 @@ const ViewAmcList = () => {
               <td>{amc.category}</td>
               <td>{amc.user}</td>
               <td>
-                <button 
-                  onClick={() => handleView(amc.id)} 
-                  className="btn-view"
-                  style={{ width: (currentUser && (amc.user === currentUser.email)) ? '60px' : '165px' }}
-                >
-                  View
-                </button>
+                  <FontAwesomeIcon icon={faEye} onClick={() => handleView(amc.id)} style={{color:"#2196F3", backgroundColor: 'transparent', cursor:'pointer'}}/>
                 {currentUser && amc.user === currentUser.email && (
                   <>
-                    <button onClick={() => handleEdit(amc.id)} className="btn-edit">Edit</button>
-                    <button onClick={() => handleDelete(amc.id)} className="btn-delete">Delete</button>
+                    <FontAwesomeIcon icon={faEdit} onClick={() => handleEdit(amc.id)} style={{color:"#4CAF50", cursor:'pointer', marginLeft:'10px'}}/>
+                    <FontAwesomeIcon icon={faTrash} onClick={() => handleDelete(amc.id)} style={{color:"#F44336", cursor:'pointer', marginLeft:'10px'}}/>
                   </>
                 )}
               </td>
@@ -245,7 +241,6 @@ const ViewAmcList = () => {
           Next
         </button>
       </div>
-      {console.log("cid xcxc ", currentAmcId)}
       {/* Conditionally render AddAmcForm, UpdateAmcForm, ViewAmcForm, and Delete confirmation dialog */}
       {showAddForm && <AddAmcForm onClose={handleCloseForm} />}
       {showUpdateForm && <UpdateAmcForm id={currentAmcId} onClose={handleCloseForm} />}

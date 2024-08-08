@@ -2,23 +2,21 @@ import React, { useEffect, useState, useCallback } from 'react';
 import axiosInstance from '../../tokenValidation/axiosInstance';
 import '../ViewUser.css';
 import Swal from 'sweetalert2';
-import AddUsersToGroup from './AddUsersToGroup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 
-const ProvideAccessManualForm = () => {
+const ProvideAccessRequestForm = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(10);
   const [sortBy, setSortBy] = useState('id');
   const [ascending, setAscending] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
-  const [showAddForm, setShowAddForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await axiosInstance.get(`/grp/getAllMyGrpUsers?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`);
+      const response = await axiosInstance.get(`/grp/viewAccessRequest-grpOwner?page=${page}&size=${size}&sortBy=${sortBy}&ascending=${ascending}`);
       setUsers(response.data.data || []); // Ensure users is always an array
       if(response.data.data === null){
         setTotalPages(1);
@@ -49,28 +47,31 @@ const ProvideAccessManualForm = () => {
     setPage(0);
   };
 
-  const handleCloseForm = () => {
-    setShowAddForm(false);
-  };
+  const handleRequest = async (id, action) => {
+    const actionText = action === 'accept' ? 'accept' : 'reject';
+    const url = action === 'accept'
+      ? `/grp/acceptAccessRequest?id=${id}`
+      : `/grp/rejectAccessRequest?id=${id}`;
 
-  const handleRemoveUser = async (userId) => {
     Swal.fire({
-      title: 'Are you sure?',
-      text: 'You won\'t be able to revert this!',
+      title: `Are you sure you want to ${actionText} this request?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, remove it!',
+      confirmButtonText: `Yes, ${actionText} it!`,
       cancelButtonText: 'No, cancel!',
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const response = await axiosInstance.delete(`/grp/removeFromGrp?id=${userId}`);
+          const response =  action === 'accept'
+                                    ? await axiosInstance.post(url)
+                                    : await axiosInstance.delete(url);;
+          
           if (response.data.success) {
             Swal.fire({
               icon: 'success',
-              title: 'Removed!',
+              title: `${actionText.charAt(0).toUpperCase() + actionText.slice(1)}ed!`,
               text: response.data.message,
             });
             fetchUsers();
@@ -97,13 +98,15 @@ const ProvideAccessManualForm = () => {
   };
 
   const filteredUsers = users.filter(user =>
-    user.email.toLowerCase().includes(searchQuery)
+    user.grpName.toLowerCase().includes(searchQuery) ||
+    user.status.toLowerCase().includes(searchQuery) ||
+    user.reason.toLowerCase().includes(searchQuery)
   );
 
   return (
     <div className="view-users">
       <div className="heading">
-        <h2>Who can view my activities</h2>
+        <h2>Manage Access Request</h2>
       </div>
       <div className="search-box">
         <input
@@ -126,13 +129,14 @@ const ProvideAccessManualForm = () => {
             </select>
           </label>
         </div>
-        <button onClick={() => setShowAddForm(true)} className="btn">Add New User</button>
       </div>
       <table>
         <thead>
           <tr>
             <td onClick={() => handleSort('id')}>#</td>
-            <td>Email</td>
+            <td>Requested User</td>
+            <td>Reason</td>
+            <td>Current Status</td>
             <td>Actions</td>
           </tr>
         </thead>
@@ -141,15 +145,18 @@ const ProvideAccessManualForm = () => {
             filteredUsers.map((user, index) => (
               <tr key={user.userId}> {/* Use a unique key based on user.id */}
                 <td>{index + 1 + page * size}</td>
-                <td>{user.email}</td>
+                <td>{user.requesterEmail}</td>
+                <td>{user.reason}</td>
+                <td>{user.status}</td>
                 <td>
-                  <FontAwesomeIcon icon={faTrash} onClick={() => handleRemoveUser(user.userId)} style={{color:"#F44336", cursor:'pointer'}}/>
+                    <FontAwesomeIcon icon={faThumbsUp} onClick={() => handleRequest(user.id, 'accept')} style={{color:"#4CAF50", cursor:'pointer', marginRight:'20px'}}/>
+                    <FontAwesomeIcon icon={faThumbsDown} onClick={() => handleRequest(user.id, 'reject')} style={{color:"#F44336", cursor:'pointer', marginLeft:'20px'}}/>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="3">No Users found</td>
+              <td colSpan="5">No Requests found</td>
             </tr>
           )}
         </tbody>
@@ -163,11 +170,8 @@ const ProvideAccessManualForm = () => {
           Next
         </button>
       </div>
-
-      {/* Conditionally render AddUserForm */}
-      {showAddForm && <AddUsersToGroup onClose={handleCloseForm} />}
     </div>
   );
 };
 
-export default ProvideAccessManualForm;
+export default ProvideAccessRequestForm;

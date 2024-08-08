@@ -6,6 +6,8 @@ import UpdatePoForm from './UpdatePoForm';
 import ViewPoForm from './ViewPoForm';
 import Swal from 'sweetalert2';
 import pdf from '../img/pdf-logo.png'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faEye, faTrash} from '@fortawesome/free-solid-svg-icons';
 
 const ViewPoList = () => {
   const [poList, setPoList] = useState([]);
@@ -222,17 +224,11 @@ const ViewPoList = () => {
               </td>
               <td>{po.user}</td>
               <td>
-                <button 
-                  onClick={() => handleView(po.id)} 
-                  className="btn-view"
-                  style={{ width: (currentUser && (po.user === currentUser.email)) ? '60px' : '165px' }}
-                >
-                  View
-                </button>
+                  <FontAwesomeIcon icon={faEye} onClick={() => handleView(po.id)} style={{color:"#2196F3", backgroundColor: 'transparent', cursor:'pointer'}}/>
                 {currentUser && po.user === currentUser.email && (
                   <>
-                    <button onClick={() => handleEdit(po.id)} className="btn-edit">Edit</button>
-                    <button onClick={() => handleDelete(po.id)} className="btn-delete">Delete</button>
+                    <FontAwesomeIcon icon={faEdit} onClick={() => handleEdit(po.id)} style={{color:"#4CAF50", cursor:'pointer', marginLeft:'10px'}}/>
+                    <FontAwesomeIcon icon={faTrash} onClick={() => handleDelete(po.id)} style={{color:"#F44336", cursor:'pointer', marginLeft:'10px'}}/>
                   </>
                 )}
               </td>
