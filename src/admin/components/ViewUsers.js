@@ -232,7 +232,7 @@ const ViewUsers = () => {
             <td onClick={() => handleSort('role')}>Role</td>
             <td>Edit</td>
             <td>Status</td>
-            <td>CSV Access</td>
+            <td onClick={() => handleSort('viewPermission')}>CSV Access</td>
           </tr>
         </thead>
         <tbody>

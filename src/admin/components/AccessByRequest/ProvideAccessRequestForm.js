@@ -100,7 +100,8 @@ const ProvideAccessRequestForm = () => {
   const filteredUsers = users.filter(user =>
     user.grpName.toLowerCase().includes(searchQuery) ||
     user.status.toLowerCase().includes(searchQuery) ||
-    user.reason.toLowerCase().includes(searchQuery)
+    user.reason.toLowerCase().includes(searchQuery) ||
+    user.requesterEmail.toLowerCase().includes(searchQuery) 
   );
 
   return (

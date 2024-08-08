@@ -144,7 +144,11 @@ const ViewAmcList = () => {
     amc.contractName.toLowerCase().includes(searchQuery) ||
     amc.userDivision.toLowerCase().includes(searchQuery) ||
     amc.category.toLowerCase().includes(searchQuery) ||
-    amc.user.toLowerCase().includes(searchQuery)
+    amc.user.toLowerCase().includes(searchQuery) ||
+    new Date(amc.startDate).toLocaleDateString().toLowerCase().includes(searchQuery) ||
+    new Date(amc.endDate).toLocaleDateString().toLowerCase().includes(searchQuery) ||
+    amc.initialCostUSD.toString().toLowerCase().includes(searchQuery) ||
+    amc.initialCostLKR.toString().toLowerCase().includes(searchQuery)
   );
 
   return (
