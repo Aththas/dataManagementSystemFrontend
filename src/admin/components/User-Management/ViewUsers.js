@@ -5,7 +5,7 @@ import AddUserForm from './AddUserForm';
 import UpdateUserForm from './UpdateUserForm';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faCheckCircle, faTimesCircle, faUserCheck, faUserTimes} from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faCheckCircle, faTimesCircle, faUserCheck, faUserTimes } from '@fortawesome/free-solid-svg-icons';
 import LoadingSpinner from '../../../components/loading/LoadingSpinner';
 
 
@@ -198,6 +198,73 @@ const ViewUsers = () => {
     }
   };
 
+
+  const handleEnableSuperUser = async (userId) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.put(`/user/enableSuperUser?id=${userId}`);
+      if (response.data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: response.data.message,
+        });
+        fetchUsers();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: response.data.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred. Please try again later.',
+      });
+    }finally {
+      setLoading(false); // End loading
+    }
+  };
+
+  const handleDisableSuperUser = async (userId) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.put(`/user/disableSuperUser?id=${userId}`);
+      if (response.data.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: response.data.message,
+        });
+        fetchUsers();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: response.data.message,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred. Please try again later.',
+      });
+    }finally {
+      setLoading(false); // End loading
+    }
+  };
+
+  const handleToggleSuperUser = async (user) => {
+    if (user.superUser) {
+      handleDisableSuperUser(user.id);
+    } else {
+      handleEnableSuperUser(user.id);
+    }
+  };
+
   const handleSearch = (event) => {
     setSearchQuery(event.target.value.toLowerCase());
   };
@@ -249,6 +316,7 @@ const ViewUsers = () => {
             <td>Edit</td>
             <td>Status</td>
             <td onClick={() => handleSort('viewPermission')}>CSV Access</td>
+            <td onClick={() => handleSort('superUser')}>Super User</td>
           </tr>
         </thead>
         <tbody>
@@ -258,7 +326,7 @@ const ViewUsers = () => {
                 <td>{index + 1 + page * size}</td>
                 <td>{user.firstname}</td>
                 <td>{user.lastname}</td>
-                <td>{user.email}</td>
+                <td>{user.email.endsWith('null') ? user.email.slice(0, -4) : user.email}</td>
                 <td>{user.role}</td>
                 <td>
                   <FontAwesomeIcon icon={faEdit} onClick={() => handleEdit(user.id)} style={{color:"#4CAF50", cursor:'pointer'}}/>
@@ -289,11 +357,24 @@ const ViewUsers = () => {
                     </>
                   )}
                 </td>
+                <td>
+                  {user.role !== "ADMIN" ? (
+                    <>
+                        {user.superUser 
+                        ? <FontAwesomeIcon icon={faCheckCircle} onClick={() => handleToggleSuperUser(user)} style={{color:"#4CAF50", cursor:'pointer'}}/> 
+                        : <FontAwesomeIcon icon={faTimesCircle} onClick={() => handleToggleSuperUser(user)} style={{color:"#F44336", cursor:'pointer'}}/>}
+                    </>
+                  ) : (
+                    <>
+                      <FontAwesomeIcon icon={faCheckCircle} style={{color:"#4CAF50", cursor:'pointer'}}/>
+                    </>
+                  )}
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="7">No Users found</td>
+              <td colSpan="8">No Users found</td>
             </tr>
           )}
         </tbody>
