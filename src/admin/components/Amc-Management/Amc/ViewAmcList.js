@@ -6,7 +6,7 @@ import UpdateAmcForm from './UpdateAmcForm';
 import ViewAmcForm from './ViewAmcForm';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faEye, faTrash} from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEye, faTrash, faRedo, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import pdf from './img/pdf-logo.png';
 import axios from 'axios';
 
@@ -142,6 +142,45 @@ const ViewAmcList = () => {
     });
   };
 
+  const handleAcknowledge = (amcId) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'You won\'t be able to revert this!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, acknowledged it!',
+      cancelButtonText: 'No, cancel!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axiosInstance.put(`/amc/acknowledge?id=${amcId}`);
+          if (response.data.success) {
+            Swal.fire(
+              'Acknowledged!',
+              'The AMC has been Acknowledged.',
+              'success'
+            );
+            fetchAmcList(); // Refresh the AMC list
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: response.data.message,
+            });
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'An unexpected error occurred. Please try again later.',
+          });
+        }
+      }
+    });
+  };
+
   const handleFile = async (filePath) => {
     try {
       const response = await axios.get(filePath, {
@@ -256,9 +295,15 @@ const ViewAmcList = () => {
                   <>
                     <FontAwesomeIcon icon={faEdit} onClick={() => handleEdit(amc.id)} style={{color:"#4CAF50", cursor:'pointer', marginLeft:'10px'}}/>
                     <FontAwesomeIcon icon={faTrash} onClick={() => handleDelete(amc.id)} style={{color:"#F44336", cursor:'pointer', marginLeft:'10px'}}/>
+                    {amc.firstEmailSent && !amc.acknowledged && (
+                      <FontAwesomeIcon icon={faRedo} onClick={() => handleAcknowledge(amc.id)} style={{ color: "#F7A000", cursor: 'pointer', marginLeft:'30px' }}/>
+                    )}
                   </>
                 )}
-              </td>
+                {amc.firstEmailSent && amc.acknowledged && (
+                  <FontAwesomeIcon icon={faCheckCircle} style={{ color: "#4CAF50", marginLeft:'30px' }}/>
+                )}
+              </td>              
             </tr>
           ))
         ):(
