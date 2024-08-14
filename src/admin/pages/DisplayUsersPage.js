@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../tokenValidation/axiosInstance'; // Import your axios instance
 import '../styles/viewUsersPage.css';
-import Sidebar from '../common/Sidebar';
-import Topbar from '../common/Topbar';
-import ViewUsers from '../components/ViewUsers';
-import LoadingSpinner from '../../components/LoadingSpinner'; // Import your spinner component
+import Sidebar from '../common/sidebar/Sidebar';
+import Topbar from '../common/topbar/Topbar';
+import ViewUsers from '../components/User-Management/ViewUsers';
+import LoadingSpinner from '../../components/loading/LoadingSpinner'; // Import your spinner component
 
 const DisplayUsersPage = () => {
   const [loading, setLoading] = useState(true);

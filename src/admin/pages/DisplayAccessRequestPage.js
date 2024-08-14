@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../tokenValidation/axiosInstance'; // Import your axios instance
 import '../styles/viewUsersPage.css';
-import Sidebar from '../common/Sidebar';
-import Topbar from '../common/Topbar';
-import LoadingSpinner from '../../components/LoadingSpinner'; // Import your spinner component
-import AccessRequestForm from '../components/RequestAccess/AccessRequestForm';
+import Sidebar from '../common/sidebar/Sidebar';
+import Topbar from '../common/topbar/Topbar';
+import LoadingSpinner from '../../components/loading/LoadingSpinner'; // Import your spinner component
+import AccessRequestForm from '../components/Access-Management/RequestAccess/AccessRequestForm';
 
 const DisplayAccessRequestPage = () => {
   const [loading, setLoading] = useState(true);
