@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../tokenValidation/axiosInstance';
 import logout from './img/logout.png';
+import mobitel from './img/img_401.png';
 import './Topbar.css';
 import Swal from 'sweetalert2'; // Assuming you are using SweetAlert for alerts
 
@@ -56,10 +57,11 @@ const Topbar = () => {
 
   return (
     <div className="top-bar">
-      <div className="admin">
-        <div className="title">
+      <div className="admin" style={{height:'100%'}}>
+      <img src={mobitel} alt="mobitel" className="img" style={{height:'100%', borderRadius:0, left:'-128px',objectFit: 'cover',boxShadow:'none'}}/>
+        {/*<div className="title">
             Admin Panel : Welcome back {user ? `${user.firstname} ${user.lastname}` : 'Bad connenction...'}
-        </div>
+        </div>*/}
       </div>
       <div className="dropdown" style={{marginRight:'50px'}}>
         <div className="user" onClick={handleLogout}>

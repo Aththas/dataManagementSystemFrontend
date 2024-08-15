@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../tokenValidation/axiosInstance';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThLarge, faBook, faUser, faClipboardList, faCog, faChevronDown, faChevronUp, faCheckCircle, faShieldAlt, faKey } from '@fortawesome/free-solid-svg-icons';
+import { faThLarge, faBook, faUser, faClipboardList, faChevronDown, faChevronUp, faCheckCircle, faShieldAlt, faKey } from '@fortawesome/free-solid-svg-icons';
 
 const Sidebar = () => {
   const [user, setUser] = useState(null);
@@ -133,12 +133,12 @@ const Sidebar = () => {
             </ul>
           )}
         </li>
-        <li>
+        {/*<li>
           <a href="/user-profile" style={{ marginLeft: '10px' }}>
             <FontAwesomeIcon icon={faCog} className="icon" />
             <div className="title">Profile</div>
           </a>
-        </li>
+        </li>*/}
       </ul>
     </div>
   );
