@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+//import { Link } from 'react-router-dom';
 import LoadingSpinner from '../loading/LoadingSpinner'; // Import LoadingSpinner
 import Swal from 'sweetalert2'; // Import SweetAlert2
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -124,7 +124,7 @@ const LoginForm = () => {
                   </div>
                   <button type="submit" className="btn1 mb-3 mt-4">Login</button>
                   <br />
-                  <small>Forgot Password? <span><Link to="/forgot-password">Reset Password</Link></span></small>
+                  {/*<small>Forgot Password? <span><Link to="/forgot-password">Reset Password</Link></span></small>*/}
                 </form>
               </div>
             </div>
