@@ -1,9 +1,9 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8090/api/v1',
+  baseURL: 'http://localhost:8090/mobi_DM/api/v1',
   headers: {
-    Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+    Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
   }
 });
 
@@ -16,17 +16,17 @@ axiosInstance.interceptors.response.use(
       try {
         const response = await axiosInstance.post('/auth/refresh-token', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('refreshToken')}`
+            Authorization: `Bearer ${sessionStorage.getItem('refreshToken')}`
           }
         });
         const { accessToken } = response.data.data;
-        localStorage.setItem('accessToken', accessToken);
+        sessionStorage.setItem('accessToken', accessToken);
         axiosInstance.defaults.headers['Authorization'] = `Bearer ${accessToken}`;
         originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error('Error refreshing token:', refreshError);
-        window.location.href = '/login';
+        window.location.href = '/mobiDM/login';
       }
     }
     return Promise.reject(error);

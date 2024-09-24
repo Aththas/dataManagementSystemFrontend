@@ -8,7 +8,9 @@ import Swal from 'sweetalert2';
 import pdf from './img/pdf-logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faEye, faTrash} from '@fortawesome/free-solid-svg-icons';
-import axios from 'axios';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../../style/toastr.css';
 
 const ViewPoList = () => {
   const [poList, setPoList] = useState([]);
@@ -24,6 +26,18 @@ const ViewPoList = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('all');
   const [currentUser, setCurrentUser] = useState(null);
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   const fetchCurrentUser = useCallback(async () => {
     try {
@@ -119,25 +133,13 @@ const ViewPoList = () => {
         try {
           const response = await axiosInstance.delete(`/po/deleteMyPo?id=${poId}`);
           if (response.data.success) {
-            Swal.fire(
-              'Deleted!',
-              'The PO has been deleted.',
-              'success'
-            );
-            fetchPoList(); // Refresh the PO list after deletion
+            toastr.success('The PO has been deleted', '');
+            fetchPoList();
           } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: response.data.message,
-            });
+            toastr.error(response.data.message, '');
           }
         } catch (error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An unexpected error occurred. Please try again later.',
-          });
+          toastr.error('An unexpected error occurred. Please try again later.', '');
         }
       }
     });
@@ -145,40 +147,43 @@ const ViewPoList = () => {
 
   const handleFile = async (filePath) => {
     try {
-      const response = await axios.get(filePath, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        responseType: 'blob',
+      console.log(filePath);
+      const response = await axiosInstance.post('/file', { readFile: filePath }, {
+          responseType: 'json'
       });
-  
-      const fileURL = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-  
-      window.open(fileURL, '_blank', 'noopener,noreferrer');
-  
-    } catch (error) {
-      if (error.response) {
-        console.error('Response error:', error.response.data);
-        console.error('Status:', error.response.status);
-        console.error('Headers:', error.response.headers);
-      } else if (error.request) {
-        console.error('Request error:', error.request);
-      } else {
-        console.error('Error:', error.message);
+      const { fileName, fileContent } = response.data.data;
+      console.log(response.data);
+      console.log(response.data.data);
+
+      // Decode Base64 to binary before creating the Blob
+      const decodedData = atob(fileContent);
+      const byteArray = new Uint8Array(decodedData.length);
+      for (let i = 0; i < decodedData.length; i++) {
+          byteArray[i] = decodedData.charCodeAt(i);
       }
-    }
+      const blob = new Blob([byteArray], { type: 'application/pdf' });
+      
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    } 
   };
   
 
 
   const filteredPoList = poList.filter(po =>
     po.vendorName.toLowerCase().includes(searchQuery) ||
-    po.approvalStatus.toLowerCase().includes(searchQuery) ||
     po.user.toLowerCase().includes(searchQuery) ||
     po.poType.toLowerCase().includes(searchQuery) ||
     po.department.toLowerCase().includes(searchQuery) ||
     po.poNumber.toString().toLowerCase().includes(searchQuery) ||
-    new Date(po.creationDate).toLocaleDateString().toLowerCase().includes(searchQuery) ||
+    po.prNumber.toString().toLowerCase().includes(searchQuery) ||
     new Date(po.poCreationDate).toLocaleDateString().toLowerCase().includes(searchQuery)
   );
 
@@ -226,11 +231,10 @@ const ViewPoList = () => {
           <tr>
             <td onClick={() => handleSort('id')}>#</td>
             <td onClick={() => handleSort('poNumber')}>PO Number</td>
-            <td onClick={() => handleSort('creationDate')}>Creation Date</td>
+            <td onClick={() => handleSort('prNumber')}>PR Number</td>
             <td onClick={() => handleSort('poCreationDate')}>PO Creation Date</td>
             <td onClick={() => handleSort('poType')}>PO Type</td>
             <td onClick={() => handleSort('vendorName')}>Vendor Name</td>
-            <td onClick={() => handleSort('approvalStatus')}>Approval Status</td>
             <td onClick={() => handleSort('department')}>Department</td>
             <td>PO File</td>
             <td onClick={() => handleSort('user')}>User</td>
@@ -243,11 +247,10 @@ const ViewPoList = () => {
             <tr key={po.id}>
               <td>{index + 1 + page * size}</td>
               <td>{po.poNumber}</td>
-              <td>{new Date(po.creationDate).toLocaleDateString()}</td>
+              <td>{po.prNumber}</td>
               <td>{new Date(po.poCreationDate).toLocaleDateString()}</td>
               <td>{po.poType}</td>
               <td>{po.vendorName}</td>
-              <td>{po.approvalStatus}</td>
               <td>{po.department}</td>
               <td>
                   <img src={pdf} alt="pdf file" className="tbl-user" onClick={() => handleFile(po.poFile)} style={{cursor:'pointer'}}/>
@@ -266,7 +269,7 @@ const ViewPoList = () => {
           ))
         ):(
           <tr>
-            <td colSpan="11">No Details found</td>
+            <td colSpan="10">No Details found</td>
           </tr>
         )}
         </tbody>

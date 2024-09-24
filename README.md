@@ -1,70 +1,157 @@
-# Getting Started with Create React App
+# Project: Mobitel Data Management
+- Line Manager:
+- Application Owner: Shaheed Musthalie
+- Developer: Aththas Rizwan
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Application Overview
 
-## Available Scripts
+The Mobitel Data Management System is a comprehensive application developed using Spring Boot and ReactJS with MySQL as the database. This system is designed to enhance the operations of the Information Security Division by providing critical features such as Version Control, Access Management, Activity Monitoring, File Handling, and Email Notifications. It integrates Active Directory (AD) accounts and focuses on maintaining Purchase Order (PO) details and Annual Maintenance Contract (AMC) contract details, including notifications for contract end and acknowledgment, as well as centralized file management.
 
-In the project directory, you can run:
+## Features
+Version Control: Track and manage versions of important files and documents.
+Access Management: Control and manage user access to various sections of the system.
+Activity Monitoring: Monitor and log user activities for auditing and security purposes.
+File Handling: Efficiently manage and organize files related to PO and AMC details.
+Email Notifications: Automated notifications for contract end dates and acknowledgments.
+AD Account Integration: Seamless integration with Active Directory accounts for user authentication and management.
+Centralized File Management: Maintain a centralized repository for PO and AMC contract details.
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Application Architecture
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The application follows a client-server architecture. Below is a brief overview of the network architecture:
+![alt text](images/MDM_ARCHITECTURE.png)
+![alt text](images/MDM_NW.png)
 
-### `npm test`
+## Application Architecture Summery
+- **React Frontend**: A single-page application (SPA) built with React. It interacts with the backend API to fetch and display data.
+- **Spring Boot API**: A RESTful API built with Spring Boot that handles HTTP requests from the frontend and performs business logic operations.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Frontend Technology summery:
 
-### `npm run build`
+- Node.js and npm with node:18-alpine base image
+- homepage :  /mobiDM/
+- LB URL: https://cbpapi-stg.mobitel.lk/mobiDM
+- Jenkins URL: http://172.27.44.25:8080/job/MobitelDataManagementFrontEnd/
+- Health Probe URL:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Guides
+Use the following guides to understand how features work:
+Feature Guides
+1. Version Control
+   Overview:
+   Version Control tracks changes to important files and documents, allowing users to view historical versions, compare changes, and restore previous versions if necessary.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+How It Works:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Viewing Versions:
 
-### `npm run eject`
+Navigate to the “AMC or PO User Activity” section in the application.
+Select the version you want to view from the list.
+You will see a list of versions with timestamps and user information.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. Access Management
+   Overview:
+   Access Management controls and manages user permissions within the system, ensuring that users have appropriate access to various sections and features.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+How It Works:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Adding Users:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Go to the “Access Management/Provide Access By Manual” section.
+View the list of users and their current permissions.
+Use the “Add User” button to add a new user and assign permissions.
 
-## Learn More
+Removing Users:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Find the user you wish to remove.
+Click the “Remove” button next to their email.
+Confirm the action to remove the user.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Requesting Permissions:
 
-### Code Splitting
+Go to the “Access Management/Request Access” section.
+View the access which the user already had.
+Use the request access button to request new access from other users to view their PO and AMC details.
+View the access request to view the requests which are pending
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Request Managing:
 
-### Analyzing the Bundle Size
+Go to the “Access Management/Provide Access By Request” section.
+View the requests which are sent by others.
+Decide whether to provide them the access or not.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+3. Activity Monitoring
+   Overview:
+   Activity Monitoring logs and tracks user actions within the system, providing insights into usage patterns and security events.
 
-### Making a Progressive Web App
+How It Works:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Viewing Activity Logs:
 
-### Advanced Configuration
+Navigate to the “AMC or PO User Activity” section in the application.
+Review the list of AMC/PO related user activities, including timestamps, user actions, and affected rows.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+4. File Handling
+   Overview:
+   File Handling allows users to manage and organize files related to PO and AMC details, including uploading, downloading files.
 
-### Deployment
+How It Works:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Uploading Files:
 
-### `npm run build` fails to minify
+Go to the “AMC or PO” section.
+Click the “Upload” button when add/update AMC/PO.
+Select the files from your local system and click “Submit.”
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Downloading Files:
+
+Go to the “AMC or PO” section.
+Browse the list of files and select the ones you wish to download.
+Click the icon to save them to your local system.
+Files are only accessible through the website only for authorized users who have the file viewing access.
+
+5. Email Notifications
+   Overview:
+   Email Notifications send automated alerts and reminders for important events, such as contract end dates and acknowledgments.
+
+How It Works:
+
+Whenever the critical events occurred, it will automatically send the appropriate email to the relevant users.
+Scheduled email using cron jobs for notify the authorities about the expiration of contracts.
+
+6. AD Account Integration
+   Overview:
+   AD Account Integration allows users to authenticate using their Active Directory credentials, streamlining user management and access control.
+
+How It Works:
+
+Logging In:
+
+Use your AD credentials to log in to the application.
+The system will authenticate your credentials against the AD server.
+
+### Installation
+
+1. **Clone the repository**
+   ```sh
+   git clone https://Mobitel-DevOps@dev.azure.com/Mobitel-DevOps/Mobitel%20Data%20Management/_git/MobitelDataManagementFrontEnd
+
+   ```
+2. **Navigate to the path**
+   ```sh
+   cd MobitelDataManagementFrontEnd
+
+   ```
+
+3. **Install Dependenciesy**
+   ```sh
+   npm install
+
+   ```
+4. **Run the Development Server**
+   ```sh
+   npm start
+
+   ```
+

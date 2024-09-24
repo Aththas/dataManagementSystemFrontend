@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../../tokenValidation/axiosInstance';
 import '../../style/popupForm.css';
-import Swal from 'sweetalert2';
 import LoadingSpinner from '../../../../components/loading/LoadingSpinner'; // Ensure correct path to your LoadingSpinner component
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../../style/toastr.css';
 
 const ViewAmcForm = ({ id, onClose }) => {
   const [userDivision, setUserDivision] = useState('');
@@ -16,12 +18,25 @@ const ViewAmcForm = ({ id, onClose }) => {
   const [amcValueLKR, setAmcValueLKR] = useState('');
   const [amcPercentageUponPurchasePrice, setAmcPercentageUponPurchasePrice] = useState('');
   const [category, setCategory] = useState('');
-  const [loading, setLoading] = useState(true); // Loading state
+  const [loading, setLoading] = useState(true);
+  const [currency, setCurrency] = useState('LKR');
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   useEffect(() => {
     const fetchAmcDetails = async () => {
       try {
-        setLoading(true); // Show spinner while fetching data
+        setLoading(true);
         const response = await axiosInstance.get(`/amc/viewAmc?id=${id}`);
         if (response.data.success) {
           const amc = response.data.data;
@@ -36,19 +51,14 @@ const ViewAmcForm = ({ id, onClose }) => {
           setAmcValueLKR(amc.amcValueLKR);
           setAmcPercentageUponPurchasePrice(amc.amcPercentageUponPurchasePrice);
           setCategory(amc.category);
+          if(parseInt(amc.amcValueLKR) === 0){
+            setCurrency('USD');
+          }
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: response.data.message,
-          });
+          toastr.error(response.data.message, '');
         }
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An unexpected error occurred. Please try again later.',
-        });
+        toastr.error('An unexpected error occurred. Please try again later.', '');
       } finally {
         setLoading(false); // Hide spinner after fetching data
       }
@@ -65,109 +75,57 @@ const ViewAmcForm = ({ id, onClose }) => {
         {loading ? (
           <LoadingSpinner /> // Show spinner while loading
         ) : (
-          <form className='form'>
+          <form className='form' style={{fontSize:'12px'}}>
+            
             <label className='label'>
-              User Division:
-              <input
-                type="text"
-                value={userDivision}
-                readOnly
-                className='input'
-              />
+              <b>Contract Name: </b> {contractName}
             </label>
+
             <label className='label'>
-              Contract Name:
-              <input
-                type="text"
-                value={contractName}
-                readOnly
-                className='input'
-              />
+              <b>User Division: </b> {userDivision}
             </label>
+            
             <label className='label'>
-              Existing Partner:
-              <input
-                type="text"
-                value={existingPartner}
-                readOnly
-                className='input'
-              />
+              <b>Existing Partner: </b> {existingPartner}
             </label>
+
+            <div className='row'>
+              <label className='label input-half'>
+                <b>Start Date: </b> {startDate}
+              </label>
+              <label className='label input-half'>
+                <b>End Date: </b> {endDate}
+              </label>
+            </div>
+
+            <div className='row'>
+            {currency === 'USD' ? (
+              <>
+                <label className='label input-half'>
+                  <b>Initial Cost (USD): </b> {initialCostUSD}
+                </label>
+                <label className='label input-half'>
+                  <b>AMC Value (USD): </b> {amcValueUSD}
+                </label>
+              </>
+            ) : (
+              <>
+                <label className='label input-half'>
+                  <b>Initial Cost (LKR): </b> {initialCostLKR}
+                </label>
+                <label className='label input-half'>
+                  < b>AMC Value (LKR): </b> {amcValueLKR}
+                </label>
+              </>
+            )}
+            </div>
+
             <label className='label'>
-              Initial Cost (USD):
-              <input
-                type="number"
-                value={initialCostUSD}
-                readOnly
-                className='input'
-              />
+              <b>AMC Percentage Upon Purchase Price: </b> {amcPercentageUponPurchasePrice}
             </label>
+            
             <label className='label'>
-              Initial Cost (LKR):
-              <input
-                type="number"
-                value={initialCostLKR}
-                readOnly
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              Start Date:
-              <input
-                type="date"
-                value={startDate}
-                readOnly
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              End Date:
-              <input
-                type="date"
-                value={endDate}
-                readOnly
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              AMC Value (USD):
-              <input
-                type="number"
-                value={amcValueUSD}
-                readOnly
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              AMC Value (LKR):
-              <input
-                type="number"
-                value={amcValueLKR}
-                readOnly
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              AMC Percentage Upon Purchase Price:
-              <input
-                type="number"
-                value={amcPercentageUponPurchasePrice}
-                readOnly
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              Category:
-              <select
-                value={category}
-                readOnly
-                className='input'
-              >
-                <option value="" disabled>Select Category</option>
-                <option value="L">L</option>
-                <option value="C">P</option>
-                <option value="H">H</option>
-              </select>
+              <b>Category: </b> {category}
             </label>
             <button type="button" className='button' onClick={onClose}>Close</button>
           </form>

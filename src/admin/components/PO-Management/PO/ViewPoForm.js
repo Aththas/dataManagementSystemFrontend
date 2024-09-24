@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../../tokenValidation/axiosInstance';
-import Swal from 'sweetalert2';
 import '../../style/popupForm.css';
 import LoadingSpinner from '../../../../components/loading/LoadingSpinner'; // Ensure correct path
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../../style/toastr.css';
 
 const ViewPoForm = ({ id, onClose }) => {
   const [poNumber, setPoNumber] = useState('');
@@ -10,20 +12,20 @@ const ViewPoForm = ({ id, onClose }) => {
   const [poCreationDate, setPoCreationDate] = useState('');
   const [poType, setPoType] = useState('');
   const [vendorName, setVendorName] = useState('');
-  const [vendorSiteCode, setVendorSiteCode] = useState('');
+  //const [vendorSiteCode, setVendorSiteCode] = useState('');
   const [poDescription, setPoDescription] = useState('');
-  const [approvalStatus, setApprovalStatus] = useState('');
+  //const [approvalStatus, setApprovalStatus] = useState('');
   const [currency, setCurrency] = useState('');
   const [amount, setAmount] = useState('');
   const [matchedAmount, setMatchedAmount] = useState('');
-  const [buyerName, setBuyerName] = useState('');
-  const [closureStatus, setClosureStatus] = useState('');
+  //const [buyerName, setBuyerName] = useState('');
+  //const [closureStatus, setClosureStatus] = useState('');
   const [prNumber, setPrNumber] = useState('');
   const [prCreationDate, setPrCreationDate] = useState('');
-  const [requisitionHeaderId, setRequisitionHeaderId] = useState('');
+  //const [requisitionHeaderId, setRequisitionHeaderId] = useState('');
   const [requesterName, setRequesterName] = useState('');
   const [requesterEmpNum, setRequesterEmpNum] = useState('');
-  const [lineNum, setLineNum] = useState('');
+  //const [lineNum, setLineNum] = useState('');
   const [itemCode, setItemCode] = useState('');
   const [itemDescription, setItemDescription] = useState('');
   const [lineItemDescription, setLineItemDescription] = useState('');
@@ -37,6 +39,18 @@ const ViewPoForm = ({ id, onClose }) => {
   const [purchasePoDate, setPurchasePoDate] = useState('');
   const [department, setDepartment] = useState('');
   const [loading, setLoading] = useState(true); // Add loading state
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   const addOneDay = (dateString) => {
     const date = new Date(dateString);
@@ -56,20 +70,20 @@ const ViewPoForm = ({ id, onClose }) => {
           setPoCreationDate(po.poCreationDate ? addOneDay(po.poCreationDate) : '');
           setPoType(po.poType);
           setVendorName(po.vendorName);
-          setVendorSiteCode(po.vendorSiteCode);
+          //setVendorSiteCode(po.vendorSiteCode);
           setPoDescription(po.poDescription);
-          setApprovalStatus(po.approvalStatus);
+          //setApprovalStatus(po.approvalStatus);
           setCurrency(po.currency);
           setAmount(po.amount);
           setMatchedAmount(po.matchedAmount);
-          setBuyerName(po.buyerName);
-          setClosureStatus(po.closureStatus);
+          //setBuyerName(po.buyerName);
+          //setClosureStatus(po.closureStatus);
           setPrNumber(po.prNumber);
           setPrCreationDate(po.prCreationDate ? addOneDay(po.prCreationDate) : '');
-          setRequisitionHeaderId(po.requisitionHeaderId);
+          //setRequisitionHeaderId(po.requisitionHeaderId);
           setRequesterName(po.requesterName);
           setRequesterEmpNum(po.requesterEmpNum);
-          setLineNum(po.lineNum);
+          //setLineNum(po.lineNum);
           setItemCode(po.itemCode);
           setItemDescription(po.itemDescription);
           setLineItemDescription(po.lineItemDescription);
@@ -83,18 +97,10 @@ const ViewPoForm = ({ id, onClose }) => {
           setPurchasePoDate(po.purchasePoDate ? addOneDay(po.purchasePoDate) : '');
           setDepartment(po.department);
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: response.data.message,
-          });
+          toastr.error(response.data.message, '');
         }
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An unexpected error occurred. Please try again later.',
-        });
+        toastr.error('An unexpected error occurred. Please try again later.', '');
       } finally {
         setLoading(false); // Stop loading
       }
@@ -105,293 +111,114 @@ const ViewPoForm = ({ id, onClose }) => {
 
   return (
     <div className="popup-overlay">
-      <div className="popup-content">
-      {loading ? ( // Show spinner if loading
+      <div className="popup-content-po">
+      {loading ? ( 
           <LoadingSpinner />
         ) : (
           <>
         <button className="popup-close" onClick={onClose}>×</button>
         <h2 className='h2'>View PO</h2>
-        <form className='form'>
+        <form className='form' style={{fontSize:'12px'}}>
+          <div className='row'>
+            <label className='label input-half'>
+              <b>PO Number: </b> {poNumber}
+            </label>
+            <label className='label input-half'>
+              <b>PO Creation Date: </b> {poCreationDate}
+            </label>
+            <label className='label input-half'>
+              <b>Creation Date: </b> {creationDate}
+            </label>
+          </div>
+
+          <div className="row">
+            <label className='label input-half'>
+              <b>PR Number: </b> {prNumber}
+            </label>
+            <label className='label input-half'>
+              <b>PR Creation Date: </b> {prCreationDate}
+            </label>
+            <label className='label input-half'>
+              <b>PO Type: </b> {poType}
+            </label>
+          </div>
+
+          <div className='row'>
+            <label className='label input-half'>
+              <b>Currency: </b> {currency}
+            </label>
+            <label className='label input-half'>
+              <b>Amount: </b> {amount}
+            </label>
+            <label className='label input-half'>
+              <b>Department: </b> {department}
+            </label>
+          </div>
+
+          <div className='row'>
+            <label className='label input-half'>
+              <b>Vendor Name: </b> {vendorName}
+            </label>
+            <label className='label input-half'>
+              <b>Requester Name: </b> {requesterName}
+            </label>
+            <label className='label input-half'>
+              <b>Requester Employee Number: </b> {requesterEmpNum}
+            </label>
+          </div>
+
+          <div className='row'>
+            <label className='label input-half'>
+              <b>Item Code: </b> {itemCode}
+            </label>
+            <label className='label input-half'>
+              <b>Unit: </b> {unit}
+            </label>
+            <label className='label input-half'>
+              <b>Unit Price: </b> {unitPrice}
+            </label>
+          </div>
+
+          <div className='row'>
+            <label className='label input-half'>
+              <b>Quantity: </b> {quantity}
+            </label>
+            <label className='label input-half'>
+              <b>Line Amount: </b> {lineAmount}
+            </label>
+            <label className='label input-half'>
+              <b>Budget Account: </b> {budgetAccount}
+            </label>
+          </div>
+
+          <div className='row'>
+            <label className='label input-half'>
+              <b>Purchase Deliver To Person ID: </b> {purchaseDeliverToPersonId}
+            </label>
+            <label className='label input-half'>
+              <b>Purchase PO Date: </b> {purchasePoDate}
+            </label>
+            <label className='label input-half'>
+              <b>Warranty: </b> {matchedAmount}
+            </label>
+          </div>
+
           <label className='label'>
-            PO Number:
-            <input
-              type="text"
-              value={poNumber}
-              readOnly
-              className='input'
-            />
+            <b>Item Description: </b> {itemDescription}
           </label>
+
           <label className='label'>
-            Creation Date:
-            <input
-              type="date"
-              value={creationDate}
-              readOnly
-              className='input'
-            />
+            <b>Line Item Description: </b> {lineItemDescription}
           </label>
-          <label className='label'>
-            PO Creation Date:
-            <input
-              type="date"
-              value={poCreationDate}
-              readOnly
-              className='input'
-            />
+
+          <label className='label input-half'>
+            <b>PO Description: </b> {poDescription}
           </label>
-          <label className='label'>
-            PO Type:
-            <input
-              type="text"
-              value={poType}
-              readOnly
-              className='input'
-            />
+          
+          <label className='label input-half'>
+            <b>Segment 6 Desc: </b> {segment6Desc}
           </label>
-          <label className='label'>
-            Vendor Name:
-            <input
-              type="text"
-              value={vendorName}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Vendor Site Code:
-            <input
-              type="text"
-              value={vendorSiteCode}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            PO Description:
-            <input
-              type="text"
-              value={poDescription}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Approval Status:
-            <input
-              type="text"
-              value={approvalStatus}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Currency:
-            <input
-              type="text"
-              value={currency}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Amount:
-            <input
-              type="number"
-              value={amount}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Matched Amount:
-            <input
-              type="number"
-              value={matchedAmount}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Buyer Name:
-            <input
-              type="text"
-              value={buyerName}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Closure Status:
-            <input
-              type="text"
-              value={closureStatus}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            PR Number:
-            <input
-              type="text"
-              value={prNumber}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            PR Creation Date:
-            <input
-              type="date"
-              value={prCreationDate}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Requisition Header ID:
-            <input
-              type="text"
-              value={requisitionHeaderId}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Requester Name:
-            <input
-              type="text"
-              value={requesterName}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Requester Emp Num:
-            <input
-              type="text"
-              value={requesterEmpNum}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Line Num:
-            <input
-              type="text"
-              value={lineNum}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Item Code:
-            <input
-              type="text"
-              value={itemCode}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Item Description:
-            <input
-              type="text"
-              value={itemDescription}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Line Item Description:
-            <input
-              type="text"
-              value={lineItemDescription}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Unit:
-            <input
-              type="text"
-              value={unit}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Unit Price:
-            <input
-              type="number"
-              value={unitPrice}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Quantity:
-            <input
-              type="number"
-              value={quantity}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Line Amount:
-            <input
-              type="number"
-              value={lineAmount}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Budget Account:
-            <input
-              type="text"
-              value={budgetAccount}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Segment 6 Desc:
-            <input
-              type="text"
-              value={segment6Desc}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Purchase Deliver To Person ID:
-            <input
-              type="text"
-              value={purchaseDeliverToPersonId}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Purchase PO Date:
-            <input
-              type="date"
-              value={purchasePoDate}
-              readOnly
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Department:
-            <input
-              type="text"
-              value={department}
-              readOnly
-              className='input'
-            />
-          </label>
+          
           <button type="button" className='button' onClick={onClose}>Close</button>
         </form>
         </>

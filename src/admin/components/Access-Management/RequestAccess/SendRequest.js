@@ -1,14 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/popupForm.css';
 import axiosInstance from '../../../tokenValidation/axiosInstance';
-import Swal from 'sweetalert2';
 import LoadingSpinner from '../../../../components/loading/LoadingSpinner'; // Ensure correct path to your component
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../../style/toastr.css';
 
 const SendRequest = ({ onClose }) => {
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false); // Loading state
   const [users, setUsers] = useState([]); // State to hold the user data
   const [reason, setReason] = useState('');
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -18,18 +32,10 @@ const SendRequest = ({ onClose }) => {
         if (response.data.success) {
           setUsers(response.data.data || []); // Set users if response is successful
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: response.data.message,
-          });
+          toastr.error(response.data.message, '');
         }
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An unexpected error occurred. Please try again later.',
-        });
+        toastr.error('An unexpected error occurred. Please try again later.', '');
       } finally {
         setLoading(false); // Stop loading
       }
@@ -49,26 +55,15 @@ const SendRequest = ({ onClose }) => {
       });
 
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        }).then(() => {
-          window.location.href = '/access-request';
-        });
+        toastr.success(response.data.message, '');
+        setTimeout(() => {
+          window.location.href = '/mobiDM/access-request';
+        }, 2000);
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An unexpected error occurred. Please try again later.',
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     } finally {
       setLoading(false); // Set loading to false when the request completes
       onClose();

@@ -1,0 +1,10 @@
+.toast-message {
+    font-size: 13px;
+}
+#toast-container > .toast-success {
+    opacity: 1 !important;
+  }
+
+#toast-container > .toast-error {
+    opacity: 1 !important;
+  }

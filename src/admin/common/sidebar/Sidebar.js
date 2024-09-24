@@ -41,15 +41,15 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <ul>
-        <li style={{marginBottom:'20px'}}>
-          <a href="/view-amcList">
+        <li>
+          <a href="/mobiDM/view-amcList">
             <FontAwesomeIcon icon={faThLarge} className="icon" />
             <div className="title">Dashboard</div>
           </a>
         </li>
         {user && user.role === 'ADMIN' && (
-          <li style={{marginBottom:'20px'}}>
-            <a href="/view-users" style={{ marginLeft: '10px' }}>
+          <li style={{marginBottom:'17px'}}>
+            <a href="/mobiDM/view-users" style={{ marginLeft: '10px' }}>
               <FontAwesomeIcon icon={faUser} className="icon" />
               <div className="title">Users</div>
             </a>
@@ -59,19 +59,19 @@ const Sidebar = () => {
           <div onClick={toggleAmcSublist} style={{ cursor: 'pointer', marginLeft: '10px', display: 'flex', alignItems: 'center' }}>
             <FontAwesomeIcon icon={faBook} className="icon" style={{ color: 'white'}} />
             <div className="title" style={{ color: 'white' }}>
-              AMC <FontAwesomeIcon icon={isAmcSublistOpen ? faChevronUp : faChevronDown} className="icon"/>
+              OPEX (AMC) <FontAwesomeIcon icon={isAmcSublistOpen ? faChevronUp : faChevronDown} className="icon"/>
             </div>
           </div>
           {isAmcSublistOpen && (
             <ul className="sublist">
               <li style={{border: 'none'}}>
-                <a href="/view-amcList" style={{ marginLeft: '20px'}}>
+                <a href="/mobiDM/view-amcList" style={{ marginLeft: '20px'}}>
                   <FontAwesomeIcon icon={faClipboardList} className="icon" />
                   <div className="title">AMC Contract</div>
                 </a>
               </li>
               <li>
-                <a href="/user-activity-amc" style={{ marginLeft: '27px' }}>
+                <a href="/mobiDM/user-activity-amc" style={{ marginLeft: '27px' }}>
                   <FontAwesomeIcon icon={faCheckCircle} className="icon" />
                   <div className="title">User Activity AMC</div>
                 </a>
@@ -83,19 +83,19 @@ const Sidebar = () => {
           <div onClick={togglePoSublist} style={{ cursor: 'pointer', marginLeft: '10px', display: 'flex', alignItems: 'center' }}>
             <FontAwesomeIcon icon={faBook} className="icon" style={{ color: 'white'}} />
             <div className="title" style={{ color: 'white' }}>
-              Purchase Order <FontAwesomeIcon icon={isPoSublistOpen ? faChevronUp : faChevronDown} className="icon"/>
+              CAPEX (PO) <FontAwesomeIcon icon={isPoSublistOpen ? faChevronUp : faChevronDown} className="icon"/>
             </div>
           </div>
           {isPoSublistOpen && (
             <ul className="sublist">
               <li style={{border: 'none'}}>
-                <a href="/view-poList" style={{ marginLeft: '20px'}}>
+                <a href="/mobiDM/view-poList" style={{ marginLeft: '20px'}}>
                   <FontAwesomeIcon icon={faClipboardList} className="icon" />
                   <div className="title">PO Details</div>
                 </a>
               </li>
               <li>
-                <a href="/user-activity-PO" style={{ marginLeft: '27px' }}>
+                <a href="/mobiDM/user-activity-PO" style={{ marginLeft: '27px' }}>
                   <FontAwesomeIcon icon={faCheckCircle} className="icon" />
                   <div className="title">User Activity PO</div>
                 </a>
@@ -113,21 +113,21 @@ const Sidebar = () => {
           {isAccessSublistOpen && (
             <ul className="sublist">
               <li style={{border: 'none'}}>
-                <a href="/provide-access-manual" style={{ marginLeft: '20px'}}>
+                <a href="/mobiDM/provide-access-manual" style={{ marginLeft: '0%'}}>
                   <FontAwesomeIcon icon={faKey} className="icon" />
-                  <div className="title" style={{fontSize:'10px'}}>Provide Access - By Manual</div>
+                  <div className="title" style={{fontSize:'0.97vw'}}>Provide Access- By Manual</div>
                 </a>
               </li>
               <li style={{border: 'none'}}>
-                <a href="/provide-access-request" style={{ marginLeft: '30px'}}>
+                <a href="/mobiDM/provide-access-request" style={{ marginLeft: '1.95%'}}>
                   <FontAwesomeIcon icon={faKey} className="icon" />
-                  <div className="title" style={{fontSize:'10px'}}>Provide Access - By Request</div>
+                  <div className="title" style={{fontSize:'0.97vw'}}>Provide Access - By Request</div>
                 </a>
               </li>
               <li>
-                <a href="/access-request" style={{ marginLeft: '30px' }}>
+                <a href="/mobiDM/access-request" style={{ marginLeft: '1.95%' }}>
                   <FontAwesomeIcon icon={faKey} className="icon" />
-                  <div className="title" style={{fontSize:'10px'}}>Request Access</div>
+                  <div className="title" style={{fontSize:'0.97vw'}}>Request Access</div>
                 </a>
               </li>
             </ul>

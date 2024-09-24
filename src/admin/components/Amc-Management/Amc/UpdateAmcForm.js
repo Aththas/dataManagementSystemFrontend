@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../../tokenValidation/axiosInstance';
-import Swal from 'sweetalert2';
 import '../../style/popupForm.css';
 import LoadingSpinner from '../../../../components/loading/LoadingSpinner'; // Ensure correct path to your LoadingSpinner component
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../../style/toastr.css';
 
 const UpdateAmcForm = ({ id, onClose }) => {
   const [userDivision, setUserDivision] = useState('');
@@ -14,10 +16,22 @@ const UpdateAmcForm = ({ id, onClose }) => {
   const [endDate, setEndDate] = useState('');
   const [amcValueUSD, setAmcValueUSD] = useState('');
   const [amcValueLKR, setAmcValueLKR] = useState('');
-  const [amcPercentageUponPurchasePrice, setAmcPercentageUponPurchasePrice] = useState('');
   const [category, setCategory] = useState('');
   const [amcFile, setAmcFile] = useState(null);
-  const [loading, setLoading] = useState(false); // State for managing loading status
+  const [loading, setLoading] = useState(false);
+  const [currency, setCurrency] = useState('LKR');
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   const addOneDay = (dateString) => {
     const date = new Date(dateString);
@@ -27,9 +41,8 @@ const UpdateAmcForm = ({ id, onClose }) => {
 
   useEffect(() => {
     const fetchAmcDetails = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
-        console.log("up "+ id);
         const response = await axiosInstance.get(`/amc/viewAmc?id=${id}`);
         if (response.data.success) {
           const amc = response.data.data;
@@ -42,21 +55,15 @@ const UpdateAmcForm = ({ id, onClose }) => {
           setEndDate(amc.endDate ? addOneDay(amc.endDate) : '');
           setAmcValueUSD(amc.amcValueUSD);
           setAmcValueLKR(amc.amcValueLKR);
-          setAmcPercentageUponPurchasePrice(amc.amcPercentageUponPurchasePrice);
           setCategory(amc.category);
+          if(parseInt(amc.amcValueLKR) === 0){
+            setCurrency('USD');
+          }
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: response.data.message,
-          });
+          toastr.error(response.data.message, '');
         }
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An unexpected error occurred. Please try again later.',
-        });
+        toastr.error('An unexpected error occurred. Please try again later.', '');
       } finally {
         setLoading(false); // Stop loading
       }
@@ -68,18 +75,30 @@ const UpdateAmcForm = ({ id, onClose }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true); // Start loading
+    let amcPercentageUponPurchasePrice = 0;
+    if(currency === 'LKR'){
+      if(parseFloat(initialCostLKR) !== 0 || initialCostLKR !== null){
+        amcPercentageUponPurchasePrice = (parseFloat(initialCostLKR)/parseFloat(amcValueLKR))*100;
+      }  
+      setInitialCostLKR('0');
+    }else{
+      if(parseFloat(initialCostUSD) !== 0 || initialCostUSD !== null){
+        amcPercentageUponPurchasePrice = (parseFloat(initialCostUSD)/parseFloat(amcValueUSD))*100;
+      } 
+      setInitialCostUSD('0');
+    }
 
     const formData = new FormData();
     formData.append('contractName', contractName);
     formData.append('userDivision', userDivision);
     formData.append('existingPartner', existingPartner);
-    formData.append('initialCostUSD', initialCostUSD);
-    formData.append('initialCostLKR', initialCostLKR);
+    formData.append('initialCostUSD', parseFloat(initialCostUSD));
+    formData.append('initialCostLKR', parseFloat(initialCostLKR));
     formData.append('startDate', startDate);
     formData.append('endDate', endDate);
-    formData.append('amcValueUSD', amcValueUSD);
-    formData.append('amcValueLKR', amcValueLKR);
-    formData.append('amcPercentageUponPurchasePrice', amcPercentageUponPurchasePrice);
+    formData.append('amcValueUSD', parseFloat(amcValueUSD));
+    formData.append('amcValueLKR', parseFloat(amcValueLKR));
+    formData.append('amcPercentageUponPurchasePrice',  parseFloat(amcPercentageUponPurchasePrice));
     formData.append('category', category);
     if (amcFile) {
       formData.append('amcFile', amcFile);
@@ -93,27 +112,15 @@ const UpdateAmcForm = ({ id, onClose }) => {
       });
 
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        }).then(() => {
-          window.location.href = '/view-amcList'; // Redirect to the AMC list page after successful update
-        });
+        toastr.success(response.data.message, '');
+        setTimeout(() => {
+          window.location.href = '/mobiDM/view-amcList';
+        }, 2000);
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'An unexpected error occurred. Please try again later.';
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: errorMessage,
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     } finally {
       setLoading(false); // Stop loading
       onClose(); // Close the popup form regardless of success or failure
@@ -129,128 +136,135 @@ const UpdateAmcForm = ({ id, onClose }) => {
           <LoadingSpinner />
         ) : (
           <form onSubmit={handleSubmit} className='form'>
-            <label className='label'>
-              User Division:
-              <input
-                type="text"
-                value={userDivision}
-                onChange={(e) => setUserDivision(e.target.value)}
-                required
-                className='input'
-              />
-            </label>
-            <label className='label'>
+            
+            <label className="label">
               Contract Name:
               <input
                 type="text"
                 value={contractName}
                 onChange={(e) => setContractName(e.target.value)}
                 required
-                className='input'
+                className="input"
               />
             </label>
-            <label className='label'>
-              Existing Partner:
-              <input
-                type="text"
-                value={existingPartner}
-                onChange={(e) => setExistingPartner(e.target.value)}
-                required
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              Initial Cost (USD):
-              <input
-                type="number"
-                value={initialCostUSD}
-                onChange={(e) => setInitialCostUSD(e.target.value)}
-                required
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              Initial Cost (LKR):
-              <input
-                type="number"
-                value={initialCostLKR}
-                onChange={(e) => setInitialCostLKR(e.target.value)}
-                required
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              Start Date:
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                required
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              End Date:
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                required
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              AMC Value (USD):
-              <input
-                type="number"
-                value={amcValueUSD}
-                onChange={(e) => setAmcValueUSD(e.target.value)}
-                required
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              AMC Value (LKR):
-              <input
-                type="number"
-                value={amcValueLKR}
-                onChange={(e) => setAmcValueLKR(e.target.value)}
-                required
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              AMC Percentage Upon Purchase Price:
-              <input
-                type="number"
-                value={amcPercentageUponPurchasePrice}
-                onChange={(e) => setAmcPercentageUponPurchasePrice(e.target.value)}
-                required
-                className='input'
-              />
-            </label>
-            <label className='label'>
-              Category:
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                required
-                className='input'
-              >
-                <option value="" disabled >Select Category</option>
-                <option value="L">L</option>
-                <option value="P">P</option>
-                <option value="H">H</option>
-              </select>
-            </label>
-            <label className='label'>
-            AMC File:
-            <input
-              type="file"
-              onChange={(e) => setAmcFile(e.target.files[0])}
-              className='input'
-            />
-          </label>
+
+            <div className="row">
+              <label className="label input-half">
+                User Division:
+                <input
+                  type="text"
+                  value={userDivision}
+                  onChange={(e) => setUserDivision(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                Existing Partner:
+                <input
+                  type="text"
+                  value={existingPartner}
+                  onChange={(e) => setExistingPartner(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            </div>
+
+            <div className="row">
+              <label className="label input-half">
+                Start Date:
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                End Date:
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            </div>
+            
+            <div className="row">
+            {currency === 'USD' ? (
+              <>
+                <label className="label input-half">
+                  Initial Cost (USD):
+                  <input
+                    type="number"
+                    value={initialCostUSD}
+                    onChange={(e) => setInitialCostUSD(e.target.value)}
+                    className="input"
+                  />
+                </label>
+                <label className="label input-half">
+                  AMC Value (USD):
+                  <input
+                    type="number"
+                    value={amcValueUSD}
+                    onChange={(e) => setAmcValueUSD(e.target.value)}
+                    className="input"
+                  />
+                </label>
+                </>
+            ) : (
+              <>
+                <label className="label input-half">
+                  Initial Cost (LKR):
+                  <input
+                    type="number"
+                    value={initialCostLKR}
+                    onChange={(e) => setInitialCostLKR(e.target.value)}
+                    className="input"
+                  />
+                </label>
+                <label className="label input-half">
+                  AMC Value (LKR):
+                  <input
+                    type="number"
+                    value={amcValueLKR}
+                    onChange={(e) => setAmcValueLKR(e.target.value)}
+                    className="input"
+                  />
+                </label>
+                </>
+            )}
+            </div>
+
+            <div className="row">
+              <label className='label input-half'>
+                Category:
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  required
+                  className='input'
+                >
+                  <option value="" disabled >Select Category</option>
+                  <option value="Hardware and Software Systems">Hardware and Software Systems</option>
+                  <option value="License subscriptions">License subscriptions</option>
+                  <option value="License Software assurnce">License Software assurnce</option>
+                  <option value="Product Local Support">Product Local Support</option>
+                </select>
+              </label>
+              <label className='label input-half'>
+                AMC File:
+                <input
+                  type="file"
+                  onChange={(e) => setAmcFile(e.target.files[0])}
+                  className='input'
+                />
+              </label>
+            </div>
             <button type="submit" className='button'>Submit</button>
           </form>
         )}

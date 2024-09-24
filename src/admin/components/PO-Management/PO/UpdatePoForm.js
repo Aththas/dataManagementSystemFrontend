@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../../tokenValidation/axiosInstance';
-import Swal from 'sweetalert2';
 import LoadingSpinner from '../../../../components/loading/LoadingSpinner'; // Ensure correct path
 import '../../style/popupForm.css';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../../style/toastr.css';
 
 const UpdatePoForm = ({ id, onClose }) => {
   const [poNumber, setPoNumber] = useState('');
@@ -10,20 +12,20 @@ const UpdatePoForm = ({ id, onClose }) => {
   const [poCreationDate, setPoCreationDate] = useState('');
   const [poType, setPoType] = useState('');
   const [vendorName, setVendorName] = useState('');
-  const [vendorSiteCode, setVendorSiteCode] = useState('');
+  //const [vendorSiteCode, setVendorSiteCode] = useState('');
   const [poDescription, setPoDescription] = useState('');
-  const [approvalStatus, setApprovalStatus] = useState('');
+  //const [approvalStatus, setApprovalStatus] = useState('');
   const [currency, setCurrency] = useState('');
   const [amount, setAmount] = useState('');
   const [matchedAmount, setMatchedAmount] = useState('');
-  const [buyerName, setBuyerName] = useState('');
-  const [closureStatus, setClosureStatus] = useState('');
+  //const [buyerName, setBuyerName] = useState('');
+  //const [closureStatus, setClosureStatus] = useState('');
   const [prNumber, setPrNumber] = useState('');
   const [prCreationDate, setPrCreationDate] = useState('');
-  const [requisitionHeaderId, setRequisitionHeaderId] = useState('');
+  //const [requisitionHeaderId, setRequisitionHeaderId] = useState('');
   const [requesterName, setRequesterName] = useState('');
   const [requesterEmpNum, setRequesterEmpNum] = useState('');
-  const [lineNum, setLineNum] = useState('');
+  //const [lineNum, setLineNum] = useState('');
   const [itemCode, setItemCode] = useState('');
   const [itemDescription, setItemDescription] = useState('');
   const [lineItemDescription, setLineItemDescription] = useState('');
@@ -38,6 +40,18 @@ const UpdatePoForm = ({ id, onClose }) => {
   const [department, setDepartment] = useState('');
   const [poFile, setPoFile] = useState(null);
   const [loading, setLoading] = useState(false); // Add loading state
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   const addOneDay = (dateString) => {
     const date = new Date(dateString);
@@ -57,20 +71,20 @@ const UpdatePoForm = ({ id, onClose }) => {
           setPoCreationDate(po.poCreationDate ? addOneDay(po.poCreationDate) : '');
           setPoType(po.poType);
           setVendorName(po.vendorName);
-          setVendorSiteCode(po.vendorSiteCode);
+          //setVendorSiteCode(po.vendorSiteCode);
           setPoDescription(po.poDescription);
-          setApprovalStatus(po.approvalStatus);
+          //setApprovalStatus(po.approvalStatus);
           setCurrency(po.currency);
           setAmount(po.amount);
           setMatchedAmount(po.matchedAmount);
-          setBuyerName(po.buyerName);
-          setClosureStatus(po.closureStatus);
+          //setBuyerName(po.buyerName);
+          //setClosureStatus(po.closureStatus);
           setPrNumber(po.prNumber);
           setPrCreationDate(po.prCreationDate ? addOneDay(po.prCreationDate) : '');
-          setRequisitionHeaderId(po.requisitionHeaderId);
+          //setRequisitionHeaderId(po.requisitionHeaderId);
           setRequesterName(po.requesterName);
           setRequesterEmpNum(po.requesterEmpNum);
-          setLineNum(po.lineNum);
+          //setLineNum(po.lineNum);
           setItemCode(po.itemCode);
           setItemDescription(po.itemDescription);
           setLineItemDescription(po.lineItemDescription);
@@ -84,18 +98,10 @@ const UpdatePoForm = ({ id, onClose }) => {
           setPurchasePoDate(po.purchasePoDate ? addOneDay(po.purchasePoDate) : '');
           setDepartment(po.department);
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: response.data.message,
-          });
+          toastr.error(response.data.message, '');
         }
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An unexpected error occurred. Please try again later.',
-        });
+        toastr.error('An unexpected error occurred. Please try again later.', '');
       } finally {
         setLoading(false); // End loading
       }
@@ -107,6 +113,9 @@ const UpdatePoForm = ({ id, onClose }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true); // Start loading
+
+    const vendorSiteCode = "no"; const approvalStatus = "no"; const buyerName = "no";
+    const closureStatus = "no"; const requisitionHeaderId = 0; const lineNum = 0;
 
     const formData = new FormData();
     formData.append('poNumber', poNumber);
@@ -152,27 +161,15 @@ const UpdatePoForm = ({ id, onClose }) => {
       });
 
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        }).then(() => {
-          window.location.href = '/view-poList'; // Redirect after successful update
-        });
+        toastr.success(response.data.message, '');
+        setTimeout(() => {
+          window.location.href = '/mobiDM/view-poList';
+        }, 2000);
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'An unexpected error occurred. Please try again later.';
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: errorMessage,
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     } finally {
       setLoading(false); // End loading
       onClose(); // Close the popup form
@@ -181,329 +178,286 @@ const UpdatePoForm = ({ id, onClose }) => {
 
   return (
     <div className="popup-overlay">
-      <div className="popup-content">
+      <div className="popup-content-po">
         <button className="popup-close" onClick={onClose}>×</button>
         <h2 className='h2'>Update PO</h2>
         {loading && <LoadingSpinner />}
         <form onSubmit={handleSubmit} className='form'>
-          <label className='label'>
-            PO Number:
-            <input
-              type="text"
-              value={poNumber}
-              onChange={(e) => setPoNumber(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Creation Date:
-            <input
-              type="date"
-              value={creationDate}
-              onChange={(e) => setCreationDate(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            PO Creation Date:
-            <input
-              type="date"
-              value={poCreationDate}
-              onChange={(e) => setPoCreationDate(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            PO Type:
-            <input
-              type="text"
-              value={poType}
-              onChange={(e) => setPoType(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Vendor Name:
-            <input
-              type="text"
-              value={vendorName}
-              onChange={(e) => setVendorName(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Vendor Site Code:
-            <input
-              type="text"
-              value={vendorSiteCode}
-              onChange={(e) => setVendorSiteCode(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            PO Description:
-            <input
-              type="text"
-              value={poDescription}
-              onChange={(e) => setPoDescription(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Approval Status:
-            <input
-              type="text"
-              value={approvalStatus}
-              onChange={(e) => setApprovalStatus(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Currency:
-            <input
-              type="text"
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Amount:
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Matched Amount:
-            <input
-              type="number"
-              value={matchedAmount}
-              onChange={(e) => setMatchedAmount(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Buyer Name:
-            <input
-              type="text"
-              value={buyerName}
-              onChange={(e) => setBuyerName(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Closure Status:
-            <input
-              type="text"
-              value={closureStatus}
-              onChange={(e) => setClosureStatus(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            PR Number:
-            <input
-              type="text"
-              value={prNumber}
-              onChange={(e) => setPrNumber(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            PR Creation Date:
-            <input
-              type="date"
-              value={prCreationDate}
-              onChange={(e) => setPrCreationDate(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Requisition Header ID:
-            <input
-              type="text"
-              value={requisitionHeaderId}
-              onChange={(e) => setRequisitionHeaderId(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Requester Name:
-            <input
-              type="text"
-              value={requesterName}
-              onChange={(e) => setRequesterName(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Requester Emp Num:
-            <input
-              type="text"
-              value={requesterEmpNum}
-              onChange={(e) => setRequesterEmpNum(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Line Num:
-            <input
-              type="text"
-              value={lineNum}
-              onChange={(e) => setLineNum(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Item Code:
-            <input
-              type="text"
-              value={itemCode}
-              onChange={(e) => setItemCode(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Item Description:
-            <input
-              type="text"
-              value={itemDescription}
-              onChange={(e) => setItemDescription(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Line Item Description:
-            <input
-              type="text"
-              value={lineItemDescription}
-              onChange={(e) => setLineItemDescription(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Unit:
-            <input
-              type="text"
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Unit Price:
-            <input
-              type="number"
-              value={unitPrice}
-              onChange={(e) => setUnitPrice(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Quantity:
-            <input
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Line Amount:
-            <input
-              type="number"
-              value={lineAmount}
-              onChange={(e) => setLineAmount(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Budget Account:
-            <input
-              type="text"
-              value={budgetAccount}
-              onChange={(e) => setBudgetAccount(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Segment 6 Desc:
-            <input
-              type="text"
-              value={segment6Desc}
-              onChange={(e) => setSegment6Desc(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Purchase Deliver To Person ID:
-            <input
-              type="text"
-              value={purchaseDeliverToPersonId}
-              onChange={(e) => setPurchaseDeliverToPersonId(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Purchase PO Date:
-            <input
-              type="date"
-              value={purchasePoDate}
-              onChange={(e) => setPurchasePoDate(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            Department:
-            <input
-              type="text"
-              value={department}
-              onChange={(e) => setDepartment(e.target.value)}
-              required
-              className='input'
-            />
-          </label>
-          <label className='label'>
-            PO File:
-            <input
-              type="file"
-              onChange={(e) => setPoFile(e.target.files[0])}
-              className='input'
-            />
-          </label>
+            <div className='row'>
+              <label className="label input-half">
+                PO Number:
+                <input
+                  type="number"
+                  value={poNumber}
+                  onChange={(e) => setPoNumber(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                PO Creation Date:
+                <input
+                  type="date"
+                  value={poCreationDate}
+                  onChange={(e) => setPoCreationDate(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                PO Type:
+                <input
+                  type="text"
+                  value={poType}
+                  onChange={(e) => setPoType(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            </div>
+
+            <div className='row'>
+              <label className="label input-half">
+                PR Number:
+                <input
+                  type="number"
+                  value={prNumber}
+                  onChange={(e) => setPrNumber(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                PR Creation Date:
+                <input
+                  type="date"
+                  value={prCreationDate}
+                  onChange={(e) => setPrCreationDate(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className='label input-half'>
+                PO File:
+                <input
+                  type="file"
+                  onChange={(e) => setPoFile(e.target.files[0])}
+                  className='input'
+                />
+              </label>
+            </div>
+
+            <div className="row">
+              <label className="label input-half">
+                Currency:
+                <input
+                  type="text"
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                Amount:
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                Department:
+                <input
+                  type="text"
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            </div>
+
+            <div className='row'>
+              <label className="label input-half">
+                Vendor Name:
+                <input
+                  type="text"
+                  value={vendorName}
+                  onChange={(e) => setVendorName(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                Requester Name:
+                <input
+                  type="text"
+                  value={requesterName}
+                  onChange={(e) => setRequesterName(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                Requester Employee Number:
+                <input
+                  type="number"
+                  value={requesterEmpNum}
+                  onChange={(e) => setRequesterEmpNum(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            </div>
+
+            <div className='row'>
+            <label className="label input-half">
+                Item Code:
+                <input
+                  type="text"
+                  value={itemCode}
+                  onChange={(e) => setItemCode(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                Unit:
+                <input
+                  type="text"
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                Unit Price:
+                <input
+                  type="number"
+                  value={unitPrice}
+                  onChange={(e) => setUnitPrice(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            </div>
+            
+            <div className='row'>
+              <label className="label input-half">
+                Quantity:
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                Line Amount:
+                <input
+                  type="number"
+                  value={lineAmount}
+                  onChange={(e) => setLineAmount(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                Budget Account:
+                <input
+                  type="text"
+                  value={budgetAccount}
+                  onChange={(e) => setBudgetAccount(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            </div>
+
+            <div className="row">
+              <label className="label input-half">
+                Purchase Deliver To Person ID:
+                <input
+                  type="number"
+                  value={purchaseDeliverToPersonId}
+                  onChange={(e) => setPurchaseDeliverToPersonId(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                Purchase PO Date:
+                <input
+                  type="date"
+                  value={purchasePoDate}
+                  onChange={(e) => setPurchasePoDate(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label input-half">
+                Warranty:
+                <input
+                  type="number"
+                  value={matchedAmount}
+                  onChange={(e) => setMatchedAmount(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            </div>
+
+            <div className='row'>
+              <label className="label">
+                PO Description:
+                <input
+                  type="text"
+                  value={poDescription}
+                  onChange={(e) => setPoDescription(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label">
+                Segment 6 Description:
+                <input
+                  type="text"
+                  value={segment6Desc}
+                  onChange={(e) => setSegment6Desc(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            </div>
+
+            <div className='row'>
+              <label className="label">
+                Item Description:
+                <input
+                  type="text"
+                  value={itemDescription}
+                  onChange={(e) => setItemDescription(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+              <label className="label">
+                Line Item Description:
+                <input
+                  type="text"
+                  value={lineItemDescription}
+                  onChange={(e) => setLineItemDescription(e.target.value)}
+                  required
+                  className="input"
+                />
+              </label>
+            </div>
+
           <button type="submit" className='button'>Update PO</button>
         </form>
       </div>

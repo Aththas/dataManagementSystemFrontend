@@ -3,11 +3,12 @@ import axiosInstance from '../../tokenValidation/axiosInstance';
 import '../style/ViewUser.css';
 import AddUserForm from './AddUserForm';
 import UpdateUserForm from './UpdateUserForm';
-import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faCheckCircle, faTimesCircle, faUserCheck, faUserTimes } from '@fortawesome/free-solid-svg-icons';
 import LoadingSpinner from '../../../components/loading/LoadingSpinner';
-
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../style/toastr.css';
 
 const ViewUsers = () => {
   const [users, setUsers] = useState([]);
@@ -21,6 +22,18 @@ const ViewUsers = () => {
   const [currentUserId, setCurrentUserId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false); 
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -71,25 +84,13 @@ const ViewUsers = () => {
     try {
       const response = await axiosInstance.put(`/user/enableUser?id=${userId}`);
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        });
+        toastr.success(response.data.message, '');
         fetchUsers();
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An unexpected error occurred. Please try again later.',
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     }finally {
       setLoading(false); // End loading
     }
@@ -100,25 +101,13 @@ const ViewUsers = () => {
     try {
       const response = await axiosInstance.put(`/user/disableUser?id=${userId}`);
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        });
+        toastr.success(response.data.message, '');
         fetchUsers();
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An unexpected error occurred. Please try again later.',
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     }finally {
       setLoading(false); // End loading
     }
@@ -137,27 +126,15 @@ const ViewUsers = () => {
     try {
       const response = await axiosInstance.put(`/user/enableCsvPermission?id=${userId}`);
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        });
+        toastr.success(response.data.message, '');
         fetchUsers();
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An unexpected error occurred. Please try again later.',
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     }finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
@@ -166,27 +143,15 @@ const ViewUsers = () => {
     try {
       const response = await axiosInstance.put(`/user/disableCsvPermission?id=${userId}`);
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        });
+        toastr.success(response.data.message, '');
         fetchUsers();
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An unexpected error occurred. Please try again later.',
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     }finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
@@ -204,27 +169,15 @@ const ViewUsers = () => {
     try {
       const response = await axiosInstance.put(`/user/enableSuperUser?id=${userId}`);
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        });
+        toastr.success(response.data.message, '');
         fetchUsers();
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An unexpected error occurred. Please try again later.',
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     }finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
@@ -233,27 +186,15 @@ const ViewUsers = () => {
     try {
       const response = await axiosInstance.put(`/user/disableSuperUser?id=${userId}`);
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        });
+        toastr.success(response.data.message, '');
         fetchUsers();
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An unexpected error occurred. Please try again later.',
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     }finally {
-      setLoading(false); // End loading
+      setLoading(false);
     }
   };
 
