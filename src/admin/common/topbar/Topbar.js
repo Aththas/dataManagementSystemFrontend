@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../tokenValidation/axiosInstance';
-import logout from './img/logout.png';
+import logout from './img/power.png';
 import mobitel from './img/img_401.png';
 import './Topbar.css';
-import Swal from 'sweetalert2'; // Assuming you are using SweetAlert for alerts
+import Swal from 'sweetalert2';
 
 const Topbar = () => {
   const [user, setUser] = useState(null);
@@ -39,10 +39,10 @@ const Topbar = () => {
       if (result.isConfirmed) {
         try {
           await axiosInstance.post('/auth/logout');
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('refreshToken');
+          sessionStorage.removeItem('accessToken');
+          sessionStorage.removeItem('refreshToken');
 
-            window.location.href = '/login';
+            window.location.href = '/mobiDM/login';
 
         } catch (error) {
         Swal.fire({

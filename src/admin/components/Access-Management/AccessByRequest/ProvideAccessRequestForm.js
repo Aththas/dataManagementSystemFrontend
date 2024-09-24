@@ -5,6 +5,9 @@ import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown } from '@fortawesome/free-solid-svg-icons';
 import LoadingSpinner from '../../../../components/loading/LoadingSpinner';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../../style/toastr.css';
 
 const ProvideAccessRequestForm = () => {
   const [users, setUsers] = useState([]);
@@ -15,6 +18,18 @@ const ProvideAccessRequestForm = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -72,25 +87,13 @@ const ProvideAccessRequestForm = () => {
                                     : await axiosInstance.delete(url);;
           
           if (response.data.success) {
-            Swal.fire({
-              icon: 'success',
-              title: `${actionText.charAt(0).toUpperCase() + actionText.slice(1)}ed!`,
-              text: response.data.message,
-            });
+            toastr.success(response.data.message, '');
             fetchUsers();
           } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: response.data.message,
-            });
+            toastr.error(response.data.message, '');
           }
         } catch (error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An unexpected error occurred. Please try again later.',
-          });
+          toastr.error('An unexpected error occurred. Please try again later.', '');
         }finally {
           setLoading(false);
         }

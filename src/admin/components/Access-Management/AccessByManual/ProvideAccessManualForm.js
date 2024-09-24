@@ -6,6 +6,9 @@ import AddUsersToGroup from './AddUsersToGroup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import LoadingSpinner from '../../../../components/loading/LoadingSpinner';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../../style/toastr.css';
 
 const ProvideAccessManualForm = () => {
   const [users, setUsers] = useState([]);
@@ -17,6 +20,18 @@ const ProvideAccessManualForm = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -71,25 +86,13 @@ const ProvideAccessManualForm = () => {
         try {
           const response = await axiosInstance.delete(`/grp/removeFromGrp?id=${userId}`);
           if (response.data.success) {
-            Swal.fire({
-              icon: 'success',
-              title: 'Removed!',
-              text: response.data.message,
-            });
+            toastr.success(response.data.message, '');
             fetchUsers();
           } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: response.data.message,
-            });
+            toastr.error(response.data.message, '');
           }
         } catch (error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An unexpected error occurred. Please try again later.',
-          });
+          toastr.error('An unexpected error occurred. Please try again later.', '');
         }finally {
           setLoading(false);
         }

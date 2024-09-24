@@ -4,7 +4,7 @@
 	box-sizing: border-box;
 }
 span{
-	color: crimson;
+	color: #50b748;
 }
 .p{
 	color: white;
@@ -13,10 +13,17 @@ span{
 	color: white;
 }
 .log{
-	background-color: rgb(51,46,46);
+	background-color: #0056a2;
+	border-radius: 50px;
+	box-shadow: 12px 12px 5px rgba(0, 0, 0, 0.5);
 }
+.login-screen{
+	transform: scale(0.8);
+    transform-origin: center;
+}
+
 .form-control{
-	background-color: rgb(70,61,61);
+	background-color: #2a679b;
 	color:white;
 	border: none;
 	outline: none;
@@ -25,24 +32,25 @@ span{
 	font-size: 15px;
 }
 .form-control:focus{
-	background-color: rgb(63,56,56);
+	background-color: rgb(89, 128, 162);
 	outline: none;
 	color: white;
-	border:  0.2rem solid crimson;
+	border:  0.2rem solid #50b748;
 }
 .btn1{
 	background-color: transparent;
-	color: crimson;
+	color: white;
 	font-weight: bold;
 	outline: none;
-	border: 0.2rem solid crimson;
+	border: 0.2rem solid #50b748;
 	border-radius: 50px;
 	height: 50px;
 	width: 300px;
 	font-size: 15px;
+	background-color: #50b748;
 }
 .btn1:hover{
-	background-color: crimson;
+	background-color: #50b748;
 	color: white;
 }
 small{
@@ -50,12 +58,12 @@ small{
 	font-size: 15px;
 }
 a{
-	color: crimson;
+	color: #50b748;
 	cursor: pointer;
 }
 a:hover
 {
-	color: crimson;
+	color: #50b748;
 	opacity: 0.75;
 	text-decoration: none;
 }
@@ -79,7 +87,7 @@ a:hover
 	top: 0;
 	height: 100%;
 	width: 100%;
-	background-color: black;
+	background-color: #133F63;
 	opacity: 0.7;
 	z-index: -1;
 }
@@ -88,10 +96,10 @@ img{
 }
 .swal-modal {
   background-color: #222222;
-  border: 3px solid crimson;
+  border: 3px solid #50b748;
 }
 .swal-title {
-  color: crimson;
+  color: #50b748;
 }
 .swal-text {
   color: white;
@@ -101,14 +109,14 @@ img{
   display: inline-block;
   padding: 0.2rem 3rem;
   font-size: 1rem;
-  color: crimson;
-  border: 0.2rem solid crimson;
+  color: #50b748;
+  border: 0.2rem solid #50b748;
   border-radius: 5rem;
   cursor: pointer;
   background: none;
 }
 .swal-button:hover {
-  background: crimson;
+  background: #50b748;
   color: #fffdfd;
 }
 
@@ -117,5 +125,11 @@ img{
 	color: #bfbfbf; /* Placeholder text color */
 	opacity: 1; /* Ensure opacity is fully visible */
 	font-style: italic; /* Optional: italicize placeholder text */
-  }
-  
+  }  
+
+  @media (max-width: 1280px) {
+    .login-screen{
+		transform: scale(0.64);
+		transform-origin: center;
+	}
+}

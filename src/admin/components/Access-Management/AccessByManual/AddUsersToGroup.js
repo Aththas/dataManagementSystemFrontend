@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import '../../style/popupForm.css';
+import '../../style/toastr.css';
 import axiosInstance from '../../../tokenValidation/axiosInstance';
-import Swal from 'sweetalert2';
 import LoadingSpinner from '../../../../components/loading/LoadingSpinner'; // Ensure correct path to your component
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
 
 const AddUsersToGroup = ({ onClose }) => {
   const [userId, setUserId] = useState('');
   const [loading, setLoading] = useState(false); // Loading state
   const [users, setUsers] = useState([]); // State to hold the user data
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -17,18 +31,10 @@ const AddUsersToGroup = ({ onClose }) => {
         if (response.data.success) {
           setUsers(response.data.data || []); // Set users if response is successful
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: response.data.message,
-          });
+          toastr.error(response.data.message, '');
         }
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An unexpected error occurred. Please try again later.',
-        });
+        toastr.error('An unexpected error occurred. Please try again later.', '');
       } finally {
         setLoading(false); // Stop loading
       }
@@ -47,26 +53,15 @@ const AddUsersToGroup = ({ onClose }) => {
       });
 
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        }).then(() => {
-          window.location.href = '/provide-access-manual';
-        });
+        toastr.success(response.data.message, '');
+        setTimeout(() => {
+            window.location.href = '/mobiDM/provide-access-manual'; // Redirect after successful update
+        }, 2000);
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An unexpected error occurred. Please try again later.',
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     } finally {
       setLoading(false); // Set loading to false when the request completes
       onClose();

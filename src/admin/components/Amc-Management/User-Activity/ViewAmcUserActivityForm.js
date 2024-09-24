@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../../tokenValidation/axiosInstance';
 import '../../style/popupForm.css';
-import Swal from 'sweetalert2';
 import LoadingSpinner from '../../../../components/loading/LoadingSpinner'; // Adjust path as necessary
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../../style/toastr.css';
 
 const ViewAmcUserActivityForm = ({ id, onClose }) => {
   const [version, setVersion] = useState('');
@@ -13,6 +15,18 @@ const ViewAmcUserActivityForm = ({ id, onClose }) => {
   const [rowAfter, setRowAfter] = useState('');
   const [dateTime, setDateTime] = useState('');
   const [loading, setLoading] = useState(true); // Add loading state
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   useEffect(() => {
     const fetchAmcUserActivityDetails = async () => {
@@ -28,20 +42,12 @@ const ViewAmcUserActivityForm = ({ id, onClose }) => {
           setRowAfter(amcUserActivity.rowAfter);
           setDateTime(amcUserActivity.dateTime);
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: response.data.message,
-          });
+          toastr.error(response.data.message, '');
         }
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An unexpected error occurred. Please try again later.',
-        });
+        toastr.error('An unexpected error occurred. Please try again later.', '');
       } finally {
-        setLoading(false); // Set loading to false once data fetching is complete
+        setLoading(false);
       }
     };
 

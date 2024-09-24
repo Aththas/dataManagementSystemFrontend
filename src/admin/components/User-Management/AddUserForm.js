@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import '../style/popupForm.css';
 import axiosInstance from '../../tokenValidation/axiosInstance';
-import Swal from 'sweetalert2';
 import LoadingSpinner from '../../../components/loading/LoadingSpinner'; 
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../style/toastr.css';
 
 const AddUserForm = ({ onClose }) => {
   const [firstname, setFirstname] = useState('');
@@ -10,6 +12,18 @@ const AddUserForm = ({ onClose }) => {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
   const [loading, setLoading] = useState(false); 
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -24,26 +38,15 @@ const AddUserForm = ({ onClose }) => {
       });
 
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        }).then(() => {
-            window.location.href = '/view-users';
-          });
+        toastr.success(response.data.message, '');
+        setTimeout(() => {
+          window.location.href = '/mobiDM/view-users';
+        }, 2000);
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'An unexpected error occurred. Please try again later.',
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     } finally {
       setLoading(false); 
       onClose();

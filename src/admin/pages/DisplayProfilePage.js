@@ -19,7 +19,7 @@ const DisplayProfilePage = () => {
       } catch (error) {
         // If the request fails (due to invalid token or other reasons)
         setAuthorized(false); // Token is invalid
-        window.location.href = '/login'; // Redirect to login
+        window.location.href = '/mobiDM/login'; // Redirect to login
       } finally {
         setLoading(false); // Hide the spinner after check
       }

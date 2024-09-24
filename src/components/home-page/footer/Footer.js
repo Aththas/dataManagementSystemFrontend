@@ -14,22 +14,22 @@ const Footer = () => {
         <h2>A web application used to manage the user activity with data management at mobitel information systems division</h2>
         <div className="social-icon">
           <div className="social-item">
-            <a href="facebook.com/Mobitel" target="_blank" rel="noopener noreferrer">
+            <a href="https://facebook.com/Mobitel" target="_blank" rel="noopener noreferrer">
               <img src={facebook} alt="Facebook" />
             </a>
           </div>
           <div className="social-item">
-            <a href="instagram.com/mobitelsrilanka" target="_blank" rel="noopener noreferrer">
+            <a href="https://instagram.com/mobitelsrilanka" target="_blank" rel="noopener noreferrer">
               <img src={instagram} alt="Instagram" />
             </a>
           </div>
           <div className="social-item">
-            <a href="twitter.com/MobitelSriLanka" target="_blank" rel="noopener noreferrer">
+            <a href="https://twitter.com/MobitelSriLanka" target="_blank" rel="noopener noreferrer">
               <img src={twitter} alt="Twitter" />
             </a>
           </div>
           <div className="social-item">
-            <a href="www.youtube.com/@SLTMobitel" target="_blank" rel="noopener noreferrer">
+            <a href="https://www.youtube.com/@SLTMobitel" target="_blank" rel="noopener noreferrer">
               <img src={youtube} alt="YouTube" />
             </a>
           </div>

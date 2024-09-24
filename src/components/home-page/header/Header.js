@@ -52,8 +52,8 @@ const Header = () => {
     <section id="header">
     <div className="header container" ref={headerRef}>
       <div className="nav-bar">
-        <div className="brand">
-          <a href="/"><h1><span>M</span>D<span>M</span></h1></a>
+        <div className="header-brand">
+          <a href="/mobiDM/"><h1><span>m</span>CO<span>MS</span></h1></a>
         </div>
         <div className="nav-list">
           <div className="hamburger" ref={hamburgerRef}>
@@ -64,7 +64,7 @@ const Header = () => {
             <li></li>
             <li></li>
             <li></li>
-            <li><a href="/login" data-after="Admin Login">Login</a></li>
+            <li><a href="/mobiDM/login" data-after="Admin Login">Login</a></li>
           </ul>
         </div>
       </div>

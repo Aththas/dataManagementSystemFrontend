@@ -8,7 +8,9 @@ import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faEye, faTrash, faRedo, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import pdf from './img/pdf-logo.png';
-import axios from 'axios';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../../style/toastr.css';
 
 const ViewAmcList = () => {
   const [amcList, setAmcList] = useState([]);
@@ -25,16 +27,28 @@ const ViewAmcList = () => {
   const [filter, setFilter] = useState('all');
   const [currentUser, setCurrentUser] = useState(null);
 
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  };
+
   const fetchCurrentUser = useCallback(async () => {
     try {
       const response = await axiosInstance.get('/auth/user-info');
       if (response.data.success) {
         setCurrentUser(response.data.data);
       } else {
-        console.error('Error fetching user details:', response.data.message);
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      console.error('Error fetching user details:', error);
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     }
   }, []);
 
@@ -52,7 +66,6 @@ const ViewAmcList = () => {
         setTotalPages(Math.ceil((response.data.message || 0) / size));
       }
     } catch (error) {
-      console.error('Error fetching AMC list:', error);
       setAmcList([]); // Set to empty array on error
     }
   }, [page, size, sortBy, ascending, filter]);
@@ -118,25 +131,13 @@ const ViewAmcList = () => {
         try {
           const response = await axiosInstance.delete(`/amc/deleteMyAmc?id=${amcId}`);
           if (response.data.success) {
-            Swal.fire(
-              'Deleted!',
-              'The AMC has been deleted.',
-              'success'
-            );
-            fetchAmcList(); // Refresh the AMC list after deletion
+            toastr.success(response.data.message, '');
+            fetchAmcList();
           } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: response.data.message,
-            });
+            toastr.error(response.data.message, '');
           }
         } catch (error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An unexpected error occurred. Please try again later.',
-          });
+          toastr.error('An unexpected error occurred. Please try again later.', '');
         }
       }
     });
@@ -157,25 +158,13 @@ const ViewAmcList = () => {
         try {
           const response = await axiosInstance.put(`/amc/acknowledge?id=${amcId}`);
           if (response.data.success) {
-            Swal.fire(
-              'Acknowledged!',
-              'The AMC has been Acknowledged.',
-              'success'
-            );
-            fetchAmcList(); // Refresh the AMC list
+            toastr.success(response.data.message, '');
+            fetchAmcList();
           } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'Error',
-              text: response.data.message,
-            });
+            toastr.error(response.data.message, '');
           }
         } catch (error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'An unexpected error occurred. Please try again later.',
-          });
+          toastr.error('An unexpected error occurred. Please try again later.', '');
         }
       }
     });
@@ -183,29 +172,34 @@ const ViewAmcList = () => {
 
   const handleFile = async (filePath) => {
     try {
-      const response = await axios.get(filePath, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-        responseType: 'blob',
-      });
-  
-      const fileURL = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-  
-      window.open(fileURL, '_blank', 'noopener,noreferrer');
-  
+        console.log(filePath);
+        const response = await axiosInstance.post('/file', { readFile: filePath }, {
+            responseType: 'json'
+        });
+        const { fileName, fileContent } = response.data.data;
+        console.log(response.data);
+        console.log(response.data.data);
+
+        // Decode Base64 to binary before creating the Blob
+        const decodedData = atob(fileContent);
+        const byteArray = new Uint8Array(decodedData.length);
+        for (let i = 0; i < decodedData.length; i++) {
+            byteArray[i] = decodedData.charCodeAt(i);
+        }
+        const blob = new Blob([byteArray], { type: 'application/pdf' });
+        
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(link.href);
     } catch (error) {
-      if (error.response) {
-        console.error('Response error:', error.response.data);
-        console.error('Status:', error.response.status);
-        console.error('Headers:', error.response.headers);
-      } else if (error.request) {
-        console.error('Request error:', error.request);
-      } else {
-        console.error('Error:', error.message);
-      }
-    }
-  };
+        console.error('Error downloading file:', error);
+        toastr.error('Error downloading file', '');
+    } 
+};
 
   const filteredAmcList = amcList.filter(amc =>
     amc.contractName.toLowerCase().includes(searchQuery) ||
@@ -213,9 +207,7 @@ const ViewAmcList = () => {
     amc.category.toLowerCase().includes(searchQuery) ||
     amc.user.toLowerCase().includes(searchQuery) ||
     new Date(amc.startDate).toLocaleDateString().toLowerCase().includes(searchQuery) ||
-    new Date(amc.endDate).toLocaleDateString().toLowerCase().includes(searchQuery) ||
-    amc.initialCostUSD.toString().toLowerCase().includes(searchQuery) ||
-    amc.initialCostLKR.toString().toLowerCase().includes(searchQuery)
+    new Date(amc.endDate).toLocaleDateString().toLowerCase().includes(searchQuery)
   );
 
   return (
@@ -263,8 +255,6 @@ const ViewAmcList = () => {
             <td onClick={() => handleSort('id')}>#</td>
             <td onClick={() => handleSort('contractName')}>Contract Name</td>
             <td onClick={() => handleSort('userDivision')}>User Division</td>
-            <td onClick={() => handleSort('initialCostUSD')}>Initial Cost (USD)</td>
-            <td onClick={() => handleSort('initialCostLKR')}>Initial Cost (LKR)</td>
             <td onClick={() => handleSort('startDate')}>Start Date</td>
             <td onClick={() => handleSort('endDate')}>End Date</td>
             <td onClick={() => handleSort('category')}>Category</td>
@@ -280,8 +270,6 @@ const ViewAmcList = () => {
               <td>{index + 1 + page * size}</td>
               <td>{amc.contractName}</td>
               <td>{amc.userDivision}</td>
-              <td>{amc.initialCostUSD}</td>
-              <td>{amc.initialCostLKR}</td>
               <td>{new Date(amc.startDate).toLocaleDateString()}</td>
               <td>{new Date(amc.endDate).toLocaleDateString()}</td>
               <td>{amc.category}</td>
@@ -308,7 +296,7 @@ const ViewAmcList = () => {
           ))
         ):(
           <tr>
-            <td colSpan="10">No Details found</td>
+            <td colSpan="9">No Details found</td>
           </tr>
         )}
         </tbody>

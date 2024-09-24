@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../tokenValidation/axiosInstance';
-import Swal from 'sweetalert2';
 import LoadingSpinner from '../../../components/loading/LoadingSpinner'; // Ensure correct path
 import '../style/popupForm.css';
+import toastr from 'toastr';
+import 'toastr/build/toastr.min.css';
+import '../style/toastr.css';
 
 const UpdateUserForm = ({ id, onClose }) => {
   const [firstname, setFirstname] = useState('');
@@ -10,6 +12,18 @@ const UpdateUserForm = ({ id, onClose }) => {
   const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
   const [loading, setLoading] = useState(false); // Loading state
+
+  toastr.options = {
+    closeButton: true,
+    progressBar: true,
+    positionClass: 'toast-top-right',
+    timeOut: 3000,
+    showMethod: 'fadeIn',
+    hideMethod: 'fadeOut',
+    showDuration: 300,
+    hideDuration: 300,
+    tapToDismiss: false,
+  }
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -23,18 +37,10 @@ const UpdateUserForm = ({ id, onClose }) => {
           setEmail(user.email);
           setRole(user.role);
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: response.data.message,
-          });
+          toastr.error(response.data.message, '');
         }
       } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'An unexpected error occurred. Please try again later.',
-        });
+        toastr.error('An unexpected error occurred. Please try again later.', '');
       } finally {
         setLoading(false); // End loading
       }
@@ -56,30 +62,18 @@ const UpdateUserForm = ({ id, onClose }) => {
       });
 
       if (response.data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: response.data.message,
-        }).then(() => {
-          window.location.href = '/view-users'; // Redirect to the users list page after successful update
-        });
+        toastr.success(response.data.message, '');
+        setTimeout(() => {
+          window.location.href = '/mobiDM/view-users';
+        }, 2000);
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response.data.message,
-        });
+        toastr.error(response.data.message, '');
       }
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 'An unexpected error occurred. Please try again later.';
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: errorMessage,
-      });
+      toastr.error('An unexpected error occurred. Please try again later.', '');
     } finally {
-      setLoading(false); // End loading
-      onClose(); // Close the popup form regardless of success or failure
+      setLoading(false);
+      onClose();
     }
   };
 

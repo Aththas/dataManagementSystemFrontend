@@ -1,4 +1,19 @@
 /* AddUserForm.css */
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px; /* Space between rows */
+}
+
+.input-half {
+  flex: 1; /* Allows the input to grow and take up equal space */
+  margin-right: 10px; /* Space between inputs */
+}
+
+.input-half:last-child {
+  margin-right: 0; /* Removes margin from the last input in the row */
+}
+
 .popup-overlay {
     position: fixed;
     top: 0;
@@ -18,6 +33,18 @@
     border-radius: 10px;
     width: 100%;
     max-width: 600px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 90%;
+    position: relative;
+    overflow-y: auto;
+  }
+
+  .popup-content-po {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 100%;
+    max-width: 1000px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     max-height: 90%;
     position: relative;
@@ -96,6 +123,19 @@
       width: 25px;
       height: 25px;
       font-size: 1.2em;
+    }
+
+    .row {
+      flex-direction: column;
+    }
+  
+    .input-half {
+      margin-right: 0;
+      margin-bottom: 10px;
+    }
+  
+    .input-half:last-child {
+      margin-bottom: 0;
     }
   }
   

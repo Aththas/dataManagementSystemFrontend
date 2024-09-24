@@ -14,7 +14,7 @@ const LoginForm = () => {
   const onSubmit = async (data) => {
     setLoading(true); // Start loading
     try {
-      const response = await axios.post('http://localhost:8090/api/v1/auth/forgot-password', {
+      const response = await axios.post('https://cbpapi-stg.mobitel.lk/mobi_DM/api/v1/auth/forgot-password', {
         email: data.email
       });
 
